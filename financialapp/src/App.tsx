@@ -1,13 +1,11 @@
-import { Button } from "./components/ui/button";
+import AppRoutes from "./routers/AppRoutes";
 
-function App() {
+const App = () => {
   return (
-    <div>
-      <h1 className="text-warning md:text-red-400">Hello</h1>
-      <Button className="bg-red-500">Click me</Button>
-      <h1>TESTING</h1>
+    <div className="App">
+      <AppRoutes />
     </div>
   );
-}
+};
 
 export default App;
