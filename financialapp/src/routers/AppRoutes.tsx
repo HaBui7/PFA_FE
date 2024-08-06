@@ -5,6 +5,7 @@ import {
   Navigate,
 } from "react-router-dom";
 
+import AppLayout from "./AppLayout";
 import Budgeting from "@/layouts/Budgeting";
 import Chatbot from "@/layouts/Chatbot";
 import Dashboard from "@/layouts/Dashboard";
@@ -33,50 +34,59 @@ const AppRoutes = () => {
           path="/"
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <AppLayout />
             </ProtectedRoute>
           }
-        />
-        <Route
-          path="/budgeting"
-          element={
-            <ProtectedRoute>
-              <Budgeting />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/chatbot"
-          element={
-            <ProtectedRoute>
-              <Chatbot />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/goals"
-          element={
-            <ProtectedRoute>
-              <Goals />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute>
-              <Profile />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/transaction"
-          element={
-            <ProtectedRoute>
-              <Transaction />
-            </ProtectedRoute>
-          }
-        />
+        >
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/budgeting"
+            element={
+              <ProtectedRoute>
+                <Budgeting />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/chatbot"
+            element={
+              <ProtectedRoute>
+                <Chatbot />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/goals"
+            element={
+              <ProtectedRoute>
+                <Goals />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/transaction"
+            element={
+              <ProtectedRoute>
+                <Transaction />
+              </ProtectedRoute>
+            }
+          />
+        </Route>
       </Routes>
     </Router>
   );
