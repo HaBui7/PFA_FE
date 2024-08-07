@@ -5,8 +5,12 @@
 :root {
   --warning: 38 92% 50%;
   --warning-foreground: 48 96% 89%;
-  --button-signin: 120 13% 17%;
-  --button-foreground: 0 0% 100%;
+  --greenButton: 125, 6%, 57%;
+  --greenButton-foreground: 0, 0%, 100%;
+  --whiteButton: 0, 0%, 100%;
+  --whiteButton-foreground: 0, 0%, 0%;
+  --aiLogo: 232, 100%, 70%;
+  --aiLogo-foreground: 0, 0%, 100%;
 }
 
 .dark {

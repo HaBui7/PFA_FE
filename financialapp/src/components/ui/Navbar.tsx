@@ -20,7 +20,7 @@ const Navbar = () => {
         </Link>
         <Link to="/chatbot" className="text-black hover:text-gray-600">
           Assistant
-          <span className="ml-1 bg-gray-200 text-white text-xs px-1 rounded">
+          <span className="ml-1 bg-aiLogo text-aiLogo-foreground text-xs px-1 rounded">
             AI
           </span>
         </Link>
@@ -28,13 +28,13 @@ const Navbar = () => {
       <div className="hidden md:flex space-x-4">
         <Link
           to="/login"
-          className="px-4 py-2 border border-gray-200 text-black rounded hover:bg-gray-100"
+          className="px-4 py-2 border border-greenButton bg-whiteButton text-whiteButton-foreground rounded-lg shadow-lg hover:bg-gray-100"
         >
           Login
         </Link>
         <Link
           to="/signup"
-          className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-500"
+          className="px-4 py-2 bg-greenButton text-greenButton-foreground rounded-lg shadow-lg  hover:bg-gray-500"
         >
           Sign up
         </Link>
@@ -78,7 +78,7 @@ const Navbar = () => {
               onClick={() => setDrawerOpen(false)}
             >
               Assistant
-              <span className="ml-1 bg-gray-200 text-white text-xs px-1 rounded">
+              <span className="ml-1 bg-aiLogo text-aiLogo-foreground text-xs px-1 rounded-lg ">
                 AI
               </span>
             </Link>
@@ -86,14 +86,14 @@ const Navbar = () => {
           <div className="w-full flex flex-col items-center space-y-4">
             <Link
               to="/login"
-              className="px-4 py-2 border border-gray-200 text-black rounded hover:bg-gray-100 w-full text-center"
+              className="px-4 py-2 border border-greenButton bg-whiteButton text-whiteButton-foreground  rounded-lg  hover:bg-gray-100 w-full text-center"
               onClick={() => setDrawerOpen(false)}
             >
               Login
             </Link>
             <Link
               to="/signup"
-              className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-500 w-full text-center"
+              className="px-4 py-2 bg-greenButton text-greenButton-foreground rounded hover:bg-gray-500 w-full text-center"
               onClick={() => setDrawerOpen(false)}
             >
               Sign up

@@ -14,6 +14,7 @@ import Profile from "@/layouts/Profile";
 import Transaction from "@/layouts/Transaction";
 import Login from "@/layouts/Authentication/Login";
 import Signup from "@/layouts/Authentication/Signup";
+import HomePage from "@/layouts/Homepage";
 
 const isAuthenticated = () => {
   // Simulate authentication status (temporary)
@@ -40,6 +41,14 @@ const AppRoutes = () => {
         >
           <Route
             path="/"
+            element={
+              <ProtectedRoute>
+                <HomePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard"
             element={
               <ProtectedRoute>
                 <Dashboard />
