@@ -1,0 +1,58 @@
+[
+  {
+    "name": "Rent Payment",
+    "date": "2024-08-01",
+    "amount": -1200.0,
+    "category": "Housing & Utilities",
+    "type": "expense"
+  },
+  {
+    "name": "Groceries",
+    "date": "2024-08-02",
+    "amount": -150.0,
+    "category": "Food",
+    "type": "expense"
+  },
+  {
+    "name": "Salary",
+    "date": "2024-08-03",
+    "amount": 3000.0,
+    "category": "Income",
+    "type": "income"
+  },
+  {
+    "name": "Electricity Bill",
+    "date": "2024-08-04",
+    "amount": -100.0,
+    "category": "Housing & Utilities",
+    "type": "expense"
+  },
+  {
+    "name": "Bus Pass",
+    "date": "2024-08-05",
+    "amount": -50.0,
+    "category": "Transportation",
+    "type": "expense"
+  },
+  {
+    "name": "Restaurant",
+    "date": "2024-08-06",
+    "amount": -60.0,
+    "category": "Food",
+    "type": "expense"
+  },
+  {
+    "name": "Gym Membership",
+    "date": "2024-08-07",
+    "amount": -40.0,
+    "category": "Health",
+    "type": "expense"
+  },
+  {
+    "name": "Movie Night",
+    "date": "2024-08-08",
+    "amount": -30.0,
+    "category": "Entertainment",
+    "type": "expense"
+  }
+]
