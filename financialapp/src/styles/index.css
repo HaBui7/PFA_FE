@@ -11,6 +11,8 @@
   --whiteButton-foreground: 0, 0%, 0%;
   --aiLogo: 232, 100%, 70%;
   --aiLogo-foreground: 0, 0%, 100%;
+  --footer: 0, 0%, 100%;
+  --footer-foreground: 224, 65%, 11%;
 }
 
 .dark {

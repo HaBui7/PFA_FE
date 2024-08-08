@@ -40,6 +40,8 @@ module.exports = {
         "greenButton-foreground": "hsl(var(--greenButton-foreground))",
         whiteButton: "hsl(var(--whiteButton))",
         "whiteButton-foreground": "hsl(var(--whiteButton-foreground))",
+        footer: "hsl(var(--footer))",
+        "footer-foreground": "hsl(var(--footer-foreground))",
       },
     },
   },

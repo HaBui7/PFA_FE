@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 const HomePageContent = () => {
   return (
-    <div className="">
+    <div className="min-h-screen">
       <div
         className="relative bg-cover bg-center h-[32rem]"
         style={{ backgroundImage: `url(${homepage})` }}
@@ -26,7 +26,7 @@ const HomePageContent = () => {
             to="/dashboard"
           >
             <div className="flex items-center">
-              Get started free
+              Get started
               <ChevronRight className="w-5 ml-2" />
             </div>
           </Link>
