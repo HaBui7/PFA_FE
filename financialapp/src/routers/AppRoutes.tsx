@@ -18,11 +18,14 @@ import HomePage from "@/layouts/Homepage";
 
 const isAuthenticated = () => {
   // Simulate authentication status (temporary)
-  return localStorage.getItem("auth") === "true";
+  return localStorage.getItem("auth");
 };
 
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   return isAuthenticated() ? children : <Navigate to="/login" />;
+};
+const PublicRoute = ({ children }: { children: JSX.Element }) => {
+  return children;
 };
 
 const AppRoutes = () => {
@@ -32,6 +35,22 @@ const AppRoutes = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route
+          element={
+            <PublicRoute>
+              <AppLayout />
+            </PublicRoute>
+          }
+        >
+          <Route
+            path="/"
+            element={
+              <PublicRoute>
+                <HomePage />
+              </PublicRoute>
+            }
+          />
+        </Route>
+        <Route
           path="/"
           element={
             <ProtectedRoute>
@@ -39,14 +58,6 @@ const AppRoutes = () => {
             </ProtectedRoute>
           }
         >
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <HomePage />
-              </ProtectedRoute>
-            }
-          />
           <Route
             path="/dashboard"
             element={
