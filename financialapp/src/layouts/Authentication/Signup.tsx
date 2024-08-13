@@ -88,9 +88,13 @@ const Signup = () => {
         </div>
       </div>
 
+<<<<<<< Updated upstream
       <div className="md:columns-2 grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 sm:columns-1">
+=======
+      <div className="columns-2 grid-cols-1 gap-x-6 gap-y-8  max-xl:columns-1">
+>>>>>>> Stashed changes
         <div>
-          <div className="py-5 pl-20">
+          <div className="py-5 pl-20 ">
             <label
               htmlFor="name"
               className="text-sm font-medium leading-6 text-gray-900"
@@ -183,10 +187,18 @@ const Signup = () => {
               </div>
             )}
           </div>
+<<<<<<< Updated upstream
           <img
             className="md:w-8/12  sm:w-full"
             src="/src/assets/loginimage.svg"
             alt="Hello"
+=======
+        </div>
+        <div className="flex flex-col items-center">
+          <img
+            className="w-9/12 lg:visible max-xl:hidden"
+            src="/src/assets/loginimage.svg"
+>>>>>>> Stashed changes
           />
         </div>
       </div>
