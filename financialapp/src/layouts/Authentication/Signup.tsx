@@ -81,8 +81,8 @@ const Signup = () => {
           WELCOME!
         </p>
         <div className="py-0 mt-1 text-md leading-8 text-gray-600 font-bold">
-          Already have an account?,{" "}
-          <a href="/login" color="blue">
+          Already have an account?{" "}
+          <a href="/login" color="blue" className="text-black">
             Sign in
           </a>
         </div>
