@@ -16,6 +16,11 @@
     "lucide-react": "^0.418.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+<<<<<<< Updated upstream
+=======
+    "react-paginate": "^8.2.0",
+    "react-router-dom": "^6.26.0",
+>>>>>>> Stashed changes
     "tailwind-merge": "^2.4.0",
     "tailwindcss-animate": "^1.0.7"
   },

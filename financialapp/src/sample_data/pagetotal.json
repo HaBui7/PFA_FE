@@ -1,0 +1,32 @@
+[
+    {
+        "page": 2,
+        "per_page":6,
+        "total": 12,
+        "total_pages":2,
+        "data": [
+            {
+                "name": "Restaurant",
+                "date": "2024-08-06",
+                "amount": -60.0,
+                "category": "Food",
+                "type": "expense"
+              },
+              {
+                "name": "Gym Membership",
+                "date": "2024-08-07",
+                "amount": -40.0,
+                "category": "Health",
+                "type": "expense"
+              },
+              {
+                "name": "Movie Night",
+                "date": "2024-08-08",
+                "amount": -30.0,
+                "category": "Entertainment",
+                "type": "expense"
+              }
+
+        ]
+    }
+]
