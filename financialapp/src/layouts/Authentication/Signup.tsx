@@ -187,18 +187,11 @@ const Signup = () => {
               </div>
             )}
           </div>
-<<<<<<< Updated upstream
-          <img
-            className="md:w-8/12  sm:w-full"
-            src="/src/assets/loginimage.svg"
-            alt="Hello"
-=======
         </div>
         <div className="flex flex-col items-center">
           <img
             className="w-9/12 lg:visible max-xl:hidden"
             src="/src/assets/loginimage.svg"
->>>>>>> Stashed changes
           />
         </div>
       </div>

@@ -120,11 +120,7 @@ const Login = () => {
           </div>
           <div className="flex flex-col items-center">
             <img
-<<<<<<< Updated upstream
-              className="w-8/12"
-=======
               className="w-9/12  lg:visible max-lg:hidden"
->>>>>>> Stashed changes
               src="/src/assets/loginimage.svg"
               alt="Hello"
             />
