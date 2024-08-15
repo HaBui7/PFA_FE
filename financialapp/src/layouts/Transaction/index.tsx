@@ -5,7 +5,6 @@ import { Pencil } from "lucide-react";
 import { Trash2 } from "lucide-react";
 import ReactPaginate from "react-paginate";
 
-const handlePageClick = () => {};
 const TransactionPage = () => {
   return (
     <div>
@@ -48,7 +47,6 @@ const TransactionPage = () => {
           <ReactPaginate
             className="flex items-center space-x-2 bg-white shadow-md rounded-lg p-4 border border-gray-300"
             nextLabel="Next >"
-            onPageChange={handlePageClick}
             pageRangeDisplayed={5}
             marginPagesDisplayed={4}
             pageCount={5}
