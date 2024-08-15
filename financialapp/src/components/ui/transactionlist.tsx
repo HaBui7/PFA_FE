@@ -11,9 +11,9 @@ import { Pencil } from "lucide-react";
 import { Trash2 } from "lucide-react";
 import ReactPaginate from "react-paginate";
 
-const transactionlist = () => {
+const Transactionlist = () => {
   return (
-    <div className="space-y-4 m-auto flex flex-col w-4/12">
+    <div className="space-y-4 m-auto flex flex-col w-8/12">
       {Transaction.map((transaction, index) => (
         <Card key={index}>
           <CardContent className="flex justify-between pt-6 ">
@@ -69,4 +69,4 @@ const transactionlist = () => {
     </div>
   );
 };
-export default transactionlist;
+export default Transactionlist;

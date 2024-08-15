@@ -37,14 +37,12 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function lineChart() {
+export function LineChart() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Area Chart - Axes</CardTitle>
-        <CardDescription>
-          Showing total visitors for the last 6 months
-        </CardDescription>
+        <CardTitle>Spending</CardTitle>
+        <CardDescription>Showing expense for the last 6 months</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -68,7 +66,7 @@ export function lineChart() {
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              tickCount={3}
+              tickCount={8}
             />
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
             <Area
