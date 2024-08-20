@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -17,7 +18,6 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch the user profile data when the component mounts
     const fetchUserProfile = async () => {
       try {
         const response = await axios.get(
@@ -31,7 +31,6 @@ const ProfilePage = () => {
 
         const userData = response.data.data.user;
 
-        // Convert ISO date string to "YYYY-MM-DD" format for the input field
         const formattedBirthday = userData.birthday.split("T")[0];
 
         setFormData({
@@ -92,18 +91,20 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 px-4 sm:px-6 lg:px-8">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
-        <div className="flex flex-col items-center mb-6">
+    <div className="flex flex-col min-h-screen px-8 sm:px-12 lg:px-16 mt-10">
+      <div className="w-full max-w-7xl mx-auto">
+        <div className="flex items-center mb-8">
           <img
             src="https://via.placeholder.com/100"
             alt="Profile"
-            className="w-24 h-24 rounded-full mb-2"
+            className="w-24 h-24 rounded-full mr-4"
           />
-          <h2 className="text-lg font-semibold">{formData.name}</h2>
-          <p className="text-sm text-gray-600">{formData.email}</p>
+          <div>
+            <h2 className="text-2xl font-semibold">{formData.name}</h2>
+            <p className="text-gray-600">{formData.email}</p>
+          </div>
         </div>
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Full Name
@@ -114,7 +115,7 @@ const ProfilePage = () => {
               value={formData.name}
               onChange={handleChange}
               disabled={!isEditing}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
           <div>
@@ -127,7 +128,7 @@ const ProfilePage = () => {
               value={formData.email}
               onChange={handleChange}
               disabled={!isEditing}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
           <div>
@@ -140,7 +141,7 @@ const ProfilePage = () => {
               value={formData.password}
               onChange={handleChange}
               disabled={!isEditing}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
           <div>
@@ -153,7 +154,7 @@ const ProfilePage = () => {
               value={formData.birthday}
               onChange={handleChange}
               disabled={!isEditing}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
           <div>
@@ -166,7 +167,7 @@ const ProfilePage = () => {
               value={formData.initialBalance}
               onChange={handleChange}
               disabled={!isEditing}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
           <div>
@@ -179,33 +180,33 @@ const ProfilePage = () => {
               value={formData.currentBalance}
               onChange={handleChange}
               disabled={!isEditing}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
         </div>
-        <div className="flex justify-between mt-6">
-          <button
+        <div className="flex justify-center mt-8">
+          <Button
             onClick={handleEdit}
-            className={`px-4 py-2 rounded-md text-white ${
-              isEditing ? "bg-gray-300" : "bg-black"
+            className={`px-6 py-3 rounded-md text-black border-2 border-black mr-4 ${
+              isEditing ? "bg-gray-300" : "bg-white"
             }`}
             disabled={isEditing}
           >
             Edit
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={handleSave}
-            className="px-4 py-2 rounded-md text-white bg-black"
+            className="px-6 py-3 rounded-md text-white bg-black mr-4"
             disabled={!isEditing}
           >
             Save
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={handleDelete}
-            className="px-4 py-2 rounded-md text-white bg-red-600"
+            className="px-6 py-3 rounded-md text-white bg-red-600"
           >
             Delete
-          </button>
+          </Button>
         </div>
       </div>
     </div>
