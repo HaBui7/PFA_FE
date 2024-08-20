@@ -52,7 +52,7 @@ const Login = () => {
         </div>
       </div>
 
-      <div className="columns-2 grid-cols-1 gap-x-6 gap-y-8 max-lg:columns-1 ">
+      <div className="columns-2 grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
         <div>
           <div className="py-5 pl-20">
             <label
@@ -92,13 +92,13 @@ const Login = () => {
                   type="checkbox"
                   name=""
                   id=""
-                  className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 "
+                  className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                 />
-                <label className="ms-2 text-sm pb-5 text-gray-900 dark:text-gray-300 ">
-                  Remember my password
+                <label className="ms-2 text-sm pb-5 text-gray-900 dark:text-gray-300">
+                  I agree to the terms & policy
                 </label>
               </div>
-              <div className="flex flex-col ">
+              <div className="flex flex-col items-center">
                 <button
                   type="button"
                   onClick={handleLogin} // Call handleLogin on button click
@@ -116,7 +116,7 @@ const Login = () => {
           </div>
           <div className="flex flex-col items-center">
             <img
-              className="w-9/12  lg:visible max-lg:hidden"
+              className="w-7/12"
               src="/src/assets/loginimage.svg"
               alt="Hello"
             />

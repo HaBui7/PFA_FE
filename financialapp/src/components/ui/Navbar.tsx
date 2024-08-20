@@ -33,6 +33,9 @@ const Navbar = () => {
         <img src={logo} alt="Fintrack Logo" className="h-10 mr-2" />
       </div>
       <div className="hidden md:flex space-x-8">
+        <Link to="/dashboard" className="text-black hover:text-gray-600">
+          Dasboard
+        </Link>
         <Link to="/transaction" className="text-black hover:text-gray-600">
           Transaction
         </Link>

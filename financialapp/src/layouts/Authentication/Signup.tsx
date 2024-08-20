@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+
 const Signup = () => {
   const navigate = useNavigate();
 
@@ -74,23 +75,23 @@ const Signup = () => {
   return (
     <div>
       <div className="flex justify-center items-center p-10">
-        <img className="h-12" src="/src/assets/logo.webp" alt="description" />
+        <img className="h-12" src="/src/assets/logo.gif" alt="description" />
       </div>
       <div className="pl-20">
         <p className="mt-10 text-3xl leading-8 text-black-600 font-bold">
           WELCOME!
         </p>
         <div className="py-0 mt-1 text-md leading-8 text-gray-600 font-bold">
-          Already have an account?{" "}
-          <a href="/login" color="blue" className="text-black">
+          Already have an account?,{" "}
+          <a href="/login" color="blue">
             Sign in
           </a>
         </div>
       </div>
 
-      <div className="columns-2 grid-cols-1 gap-x-6 gap-y-8  max-xl:columns-1">
+      <div className="columns-2 grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
         <div>
-          <div className="py-5 pl-20 ">
+          <div className="py-5 pl-20">
             <label
               htmlFor="name"
               className="text-sm font-medium leading-6 text-gray-900"
@@ -103,7 +104,7 @@ const Signup = () => {
                 name="name"
                 type="text"
                 autoComplete="name"
-                className="px-5 content-center block w-4/5 rounded-full border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="content-center block w-4/5 rounded-full border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
@@ -120,7 +121,7 @@ const Signup = () => {
                 name="Email"
                 type="email"
                 autoComplete="email"
-                className="px-5 content-center block w-4/5 rounded-full border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="content-center block w-4/5 rounded-full border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -136,7 +137,7 @@ const Signup = () => {
                 type="password"
                 id="password"
                 name="password"
-                className="px-5 items-center block w-4/5 rounded-full border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="items-center block w-4/5 rounded-full border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -152,7 +153,7 @@ const Signup = () => {
                 type="date"
                 id="birthday"
                 name="birthday"
-                className="px-5 items-center block w-4/5 rounded-full border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="items-center block w-4/5 rounded-full border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 value={birthday}
                 onChange={(e) => setBirthday(e.target.value)}
               />
@@ -168,7 +169,7 @@ const Signup = () => {
                 I agree to the terms & policy
               </label>
             </div>
-            <div className="">
+            <div className="flex flex-col items-center">
               <button
                 type="button"
                 onClick={handleSignup}
@@ -183,12 +184,7 @@ const Signup = () => {
               </div>
             )}
           </div>
-        </div>
-        <div className="flex flex-col items-center">
-          <img
-            className="w-9/12 lg:visible max-xl:hidden"
-            src="/src/assets/loginimage.svg"
-          />
+          <img className="w-full" src="/src/assets/1.png" alt="Hello" />
         </div>
       </div>
     </div>
