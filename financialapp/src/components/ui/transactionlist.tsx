@@ -9,8 +9,7 @@ import {
 import Transaction from "@/sample_data/transaction_data.json";
 import { Pencil } from "lucide-react";
 import { Trash2 } from "lucide-react";
-import ReactPaginate from "react-paginate";
-
+import PaginatePage from "./paginate";
 const Transactionlist = () => {
   return (
     <div className="space-y-4 m-auto flex flex-col w-8/12">
@@ -45,26 +44,7 @@ const Transactionlist = () => {
         </Card>
       ))}
       <div className="flex flex-col items-center">
-        <ReactPaginate
-          className="flex items-center space-x-2 bg-white shadow-md rounded-lg p-4 border border-gray-300"
-          nextLabel="Next >"
-          pageRangeDisplayed={5}
-          marginPagesDisplayed={4}
-          pageCount={5}
-          previousLabel="< Previous"
-          pageClassName="page-item"
-          pageLinkClassName="page-link"
-          previousClassName="page-item"
-          previousLinkClassName="page-link"
-          nextClassName="page-item"
-          nextLinkClassName="page-link"
-          breakLabel="..."
-          breakClassName="page-item"
-          breakLinkClassName="page-link"
-          containerClassName="pagination"
-          activeClassName="active"
-          renderOnZeroPageCount={null}
-        />
+        <PaginatePage />
       </div>
     </div>
   );
