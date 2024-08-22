@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-
+import ErrorAlert from "./errorMessage";
+import ConfirmModal from "./confirmModal";
 import { Button } from "./button";
 import {
   Dialog,
@@ -54,14 +55,18 @@ const TransactionList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [transactionToDelete, setTransactionToDelete] =
+    useState<Transaction | null>(null);
   const [newTransaction, setNewTransaction] = useState<
-    Omit<Transaction, "_id" | "date">
+    Omit<Transaction, "_id">
   >({
     title: "",
     category: "",
     transactionAmount: 0,
     type: "expense",
+    date: "",
   });
 
   useEffect(() => {
@@ -86,6 +91,33 @@ const TransactionList = () => {
     fetchTransactions();
   }, []);
 
+  const handleDeleteClick = (transaction: Transaction) => {
+    setTransactionToDelete(transaction);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (transactionToDelete) {
+      try {
+        await axios.delete(
+          `http://localhost:3000/api/transactions/${transactionToDelete._id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("auth")}`,
+            },
+          }
+        );
+
+        setTransactions(
+          transactions.filter((t) => t._id !== transactionToDelete._id)
+        );
+        setIsDeleteModalOpen(false);
+      } catch (err) {
+        console.error("Error deleting transaction:", err);
+      }
+    }
+  };
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -99,42 +131,51 @@ const TransactionList = () => {
   };
 
   const handleAddTransaction = async () => {
-    // Frontend validation
-    if (
-      !newTransaction.title ||
-      (!newTransaction.category && newTransaction.type === "expense") ||
-      !newTransaction.transactionAmount ||
-      !newTransaction.type
-    ) {
-      alert("Please fill out all fields.");
-      return;
-    }
+    // Clear previous validation errors
+    setValidationErrors([]);
 
+    // Frontend validation
+    const errors = [];
+    if (!newTransaction.title) {
+      errors.push("Title is required.");
+    }
+    if (!newTransaction.category && newTransaction.type === "expense") {
+      errors.push("Category is required for expenses.");
+    }
+    if (!newTransaction.transactionAmount) {
+      errors.push("Transaction amount is required.");
+    }
     if (
       newTransaction.type === "expense" &&
       !categoryOptions.includes(newTransaction.category)
     ) {
-      alert("Invalid category selected.");
-      return;
+      errors.push("Invalid category selected.");
     }
-
     if (
       isNaN(Number(newTransaction.transactionAmount)) ||
       Number(newTransaction.transactionAmount) < 0
     ) {
-      alert("Invalid transaction amount.");
+      errors.push("Invalid transaction amount.");
+    }
+
+    // Date validation: Check if the date is not in the future
+    const selectedDate = new Date(newTransaction.date);
+
+    const today = new Date().getDay;
+    if (selectedDate.getDay > today) {
+      errors.push("The date cannot be in the future.");
+    }
+
+    // If there are validation errors, display them and stop the submission
+    if (errors.length > 0) {
+      setValidationErrors(errors);
       return;
     }
 
     try {
-      const newTransactionData = {
-        ...newTransaction,
-        date: new Date().toISOString(), // Current date in "2024-08-21T00:00:00.000Z" format
-      };
-
       const response = await axios.post(
         "http://localhost:3000/api/transactions/",
-        newTransactionData,
+        newTransaction,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("auth")}`,
@@ -173,7 +214,9 @@ const TransactionList = () => {
           >
             <div className="flex items-center space-x-3">
               <div className="p-2 bg-gray-100 rounded-full">
-                <DollarSign />
+                {categoryIcons[
+                  transaction.category as keyof typeof categoryIcons
+                ] || <DollarSign />}
               </div>
               <div>
                 <p className="font-bold">{transaction.title}</p>
@@ -202,16 +245,25 @@ const TransactionList = () => {
               <button className="text-gray-500">
                 <Pencil />
               </button>
-              <button className="text-red-500">
-                <Trash2 />
-              </button>
+
+              <Trash2
+                onClick={() => handleDeleteClick(transaction)}
+                color="red"
+              />
+              <ConfirmModal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                onConfirm={handleDeleteConfirm}
+                title="Delete Transaction"
+                message="Are you sure you want to delete this transaction? This action cannot be undone."
+              />
             </div>
           </div>
         ))
       )}
       <div className="flex flex-col items-center mt-6">
         <ReactPaginate
-          className="flex items-center space-x-2 bg-white shadow-md rounded-lg p-4 border border-gray-300"
+          className="flex items-center space-x-2 bg-white shadow-md rounded-lg p-4 border border-gray-300 "
           nextLabel="Next >"
           pageRangeDisplayed={5}
           marginPagesDisplayed={4}
@@ -240,6 +292,10 @@ const TransactionList = () => {
               <DialogTitle>Add Transaction</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
+              {/* Display validation errors */}
+              {validationErrors.length > 0 && (
+                <ErrorAlert message={validationErrors.join("\r\n")} />
+              )}
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Title
@@ -283,6 +339,19 @@ const TransactionList = () => {
                   type="number"
                   name="transactionAmount"
                   value={newTransaction.transactionAmount}
+                  onChange={handleInputChange}
+                  className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Date
+                </label>
+                <input
+                  type="datetime-local"
+                  name="date"
+                  value={newTransaction.date}
                   onChange={handleInputChange}
                   className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                   required

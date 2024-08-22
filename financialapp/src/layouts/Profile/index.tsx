@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import ConfirmModal from "@/components/ui/confirmModal";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
-
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -202,11 +203,18 @@ const ProfilePage = () => {
             Save
           </Button>
           <Button
-            onClick={handleDelete}
+            onClick={() => setIsDeleteModalOpen(true)}
             className="px-6 py-3 rounded-md text-white bg-red-600"
           >
             Delete
           </Button>
+          <ConfirmModal
+            isOpen={isDeleteModalOpen}
+            onClose={() => setIsDeleteModalOpen(false)}
+            onConfirm={handleDelete}
+            title="Delete Profile"
+            message="Are you sure you want to delete your profile? This action cannot be undone."
+          />
         </div>
       </div>
     </div>
