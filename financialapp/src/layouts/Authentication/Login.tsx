@@ -67,7 +67,7 @@ const Login = () => {
                 name="Email"
                 type="text"
                 autoComplete="given-name"
-                className="px-5 content-center block w-4/5 rounded-full border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className=" content-center block w-4/5 rounded-full border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)} // Update email state
               />
@@ -82,27 +82,33 @@ const Login = () => {
                   type="password"
                   id="password"
                   name="password"
-                  className="px-5 items-center block w-4/5 rounded-full border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className="items-center block w-4/5 rounded-full border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)} // Update password state
                 />
               </div>
-              <div className="">
+              <div className="flex columns-2">
                 <input
                   type="checkbox"
                   name=""
                   id=""
-                  className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                  className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 rounded-full"
                 />
                 <label className="ms-2 text-sm pb-5 text-gray-900 dark:text-gray-300">
                   I agree to the terms & policy
                 </label>
+                <a
+                  href=""
+                  className="ml-20 text-sm pb-5 text-gray-900 dark:text-gray-300 pl-20 "
+                >
+                  Forget password?
+                </a>
               </div>
               <div className="flex flex-col items-center">
                 <button
                   type="button"
                   onClick={handleLogin} // Call handleLogin on button click
-                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 w-4/5 my-5"
+                  className="text-white  hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 w-4/5  bg-neutral-800"
                 >
                   Sign In
                 </button>
