@@ -20,6 +20,7 @@ import {
   DollarSign,
 } from "lucide-react";
 import ReactPaginate from "react-paginate";
+import PaginatePage from "./paginate";
 
 interface Transaction {
   date: string;
@@ -51,6 +52,9 @@ const formatCurrency = (amount: number) => {
 };
 
 const TransactionList = () => {
+  const [currentPage, setCurrentPage] = useState(0);
+  const itemsPerPage = 3;
+
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -68,6 +72,16 @@ const TransactionList = () => {
     type: "expense",
     date: "",
   });
+  const indexOfLastTransaction = (currentPage + 1) * itemsPerPage;
+  const indexOfFirstTransaction = indexOfLastTransaction - itemsPerPage;
+  const currentTransactions = transactions.slice(
+    indexOfFirstTransaction,
+    indexOfLastTransaction
+  );
+
+  const handlePageClick = (event: { selected: number }) => {
+    setCurrentPage(event.selected);
+  };
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -188,6 +202,7 @@ const TransactionList = () => {
     } catch (err) {
       console.error("Error adding transaction:", err);
     }
+    window.location.reload();
   };
 
   if (loading) {
@@ -204,10 +219,10 @@ const TransactionList = () => {
         <h2 className="text-lg font-bold">Latest Transaction</h2>
         <Button onClick={() => setIsModalOpen(true)}>Add</Button>
       </div>
-      {transactions.length === 0 ? (
+      {currentTransactions.length === 0 ? (
         <p>You have no transactions yet.</p>
       ) : (
-        transactions.map((transaction) => (
+        currentTransactions.map((transaction) => (
           <div
             key={transaction._id}
             className="border-b border-gray-300 py-4 flex items-center justify-between"
@@ -261,28 +276,6 @@ const TransactionList = () => {
           </div>
         ))
       )}
-      <div className="flex flex-col items-center mt-6">
-        <ReactPaginate
-          className="flex items-center space-x-2 bg-white shadow-md rounded-lg p-4 border border-gray-300 "
-          nextLabel="Next >"
-          pageRangeDisplayed={5}
-          marginPagesDisplayed={4}
-          pageCount={5}
-          previousLabel="< Previous"
-          pageClassName="page-item"
-          pageLinkClassName="page-link"
-          previousClassName="page-item"
-          previousLinkClassName="page-link"
-          nextClassName="page-item"
-          nextLinkClassName="page-link"
-          breakLabel="..."
-          breakClassName="page-item"
-          breakLinkClassName="page-link"
-          containerClassName="pagination"
-          activeClassName="active"
-          renderOnZeroPageCount={null}
-        />
-      </div>
 
       {/* Modal for Adding Transaction */}
       {isModalOpen && (
@@ -382,6 +375,22 @@ const TransactionList = () => {
           </DialogContent>
         </Dialog>
       )}
+      <div>
+        <ReactPaginate
+          previousLabel={"< Previous"}
+          nextLabel={"Next >"}
+          pageCount={Math.ceil(transactions.length / itemsPerPage)}
+          onPageChange={handlePageClick}
+          containerClassName={"pagination"}
+          pageClassName={"page-item"}
+          pageLinkClassName={"page-link"}
+          previousClassName={"page-item"}
+          nextClassName={"page-item"}
+          previousLinkClassName={"page-link"}
+          nextLinkClassName={"page-link"}
+          activeClassName={"active"}
+        />
+      </div>
     </div>
   );
 };

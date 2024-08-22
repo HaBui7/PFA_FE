@@ -18,25 +18,32 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useState, useEffect } from "react";
-
-interface Post {
-  id: number;
+interface Transaction {
+  date: string;
+  type: string;
+  category: string;
+  transactionAmount: number;
   title: string;
+  _id: string;
 }
-
 function PaginatePage() {
   const pagerow = 4;
-  const [data, setData] = useState<Post[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [startIndex, setStartIndex] = useState(0);
   const [endIndex, setEndIndex] = useState(pagerow);
   const getData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/api/transactions/"
+        "http://localhost:3000/api/transactions/",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("auth")}`,
+          },
+        }
       );
-      const data = response.data;
+      const data = response.data.data.transactions;
       console.log(38, data);
-      setData(data);
+      setTransactions(data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -55,11 +62,11 @@ function PaginatePage() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.slice(startIndex, endIndex).map((transaction) => {
+          {transactions.map((transaction) => {
             return (
               <>
                 <TableRow>
-                  <TableCell className="text-left">{transaction.id}</TableCell>
+                  <TableCell className="text-left">{transaction._id}</TableCell>
                   <TableCell className="text-left">
                     {transaction.title}
                   </TableCell>

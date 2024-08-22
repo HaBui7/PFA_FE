@@ -74,8 +74,8 @@ const Signup = () => {
 
   return (
     <div>
-      <div className="flex justify-center items-center p-10">
-        <img className="h-12" src="/src/assets/logo.gif" alt="description" />
+      <div className="flex justify-center items-center  p-10">
+        <img className="h-12" src="/src/assets/logo.webp" alt="description" />
       </div>
       <div className="pl-20">
         <p className="mt-10 text-3xl leading-8 text-black-600 font-bold">
@@ -89,7 +89,7 @@ const Signup = () => {
         </div>
       </div>
 
-      <div className="columns-2 grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+      <div className="columns-2 grid-cols-1 gap-x-6 gap-y-8 max-md:columns-1">
         <div>
           <div className="py-5 pl-20">
             <label
@@ -104,7 +104,7 @@ const Signup = () => {
                 name="name"
                 type="text"
                 autoComplete="name"
-                className="content-center block w-4/5 rounded-full border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="pl-5 content-center block w-4/5 rounded-full border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
@@ -121,7 +121,7 @@ const Signup = () => {
                 name="Email"
                 type="email"
                 autoComplete="email"
-                className="content-center block w-4/5 rounded-full border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="pl-5 content-center block w-4/5 rounded-full border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -137,7 +137,7 @@ const Signup = () => {
                 type="password"
                 id="password"
                 name="password"
-                className="items-center block w-4/5 rounded-full border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="pl-5 items-center block w-4/5 rounded-full border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -153,7 +153,7 @@ const Signup = () => {
                 type="date"
                 id="birthday"
                 name="birthday"
-                className="items-center block w-4/5 rounded-full border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="pl-5 items-center  block w-4/5 rounded-full border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 value={birthday}
                 onChange={(e) => setBirthday(e.target.value)}
               />
@@ -169,7 +169,7 @@ const Signup = () => {
                 I agree to the terms & policy
               </label>
             </div>
-            <div className="flex flex-col items-center">
+            <div className="">
               <button
                 type="button"
                 onClick={handleSignup}
@@ -184,7 +184,11 @@ const Signup = () => {
               </div>
             )}
           </div>
-          <img className="w-full" src="/src/assets/1.png" alt="Hello" />
+          <img
+            className="w-9/12 hidden md:flex"
+            src="/src/assets/loginimage.svg"
+            alt="Hello"
+          />
         </div>
       </div>
     </div>
