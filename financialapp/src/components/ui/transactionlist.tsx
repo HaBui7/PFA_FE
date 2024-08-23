@@ -20,7 +20,6 @@ import {
   DollarSign,
 } from "lucide-react";
 import ReactPaginate from "react-paginate";
-import PaginatePage from "./paginate";
 
 interface Transaction {
   date: string;
@@ -375,20 +374,20 @@ const TransactionList = () => {
           </DialogContent>
         </Dialog>
       )}
-      <div>
+      <div className="flex flex-col items-center">
         <ReactPaginate
           previousLabel={"< Previous"}
           nextLabel={"Next >"}
           pageCount={Math.ceil(transactions.length / itemsPerPage)}
           onPageChange={handlePageClick}
-          containerClassName={"pagination"}
-          pageClassName={"page-item"}
-          pageLinkClassName={"page-link"}
-          previousClassName={"page-item"}
-          nextClassName={"page-item"}
-          previousLinkClassName={"page-link"}
-          nextLinkClassName={"page-link"}
-          activeClassName={"active"}
+          containerClassName="flex justify-center list-none p-0"
+          pageClassName="mx-1"
+          pageLinkClassName="block px-4 py-2 border border-gray-300 text-black-500 no-underline cursor-pointer"
+          previousClassName="mx-1"
+          nextClassName="mx-1"
+          previousLinkClassName="block px-4 py-2 border border-gray-300 text-black-500 no-underline cursor-pointer"
+          nextLinkClassName="block px-4 py-2 border border-gray-300 text-black-500 no-underline cursor-pointer"
+          activeClassName="bg-blue-300 text-white border-blue-500"
         />
       </div>
     </div>
