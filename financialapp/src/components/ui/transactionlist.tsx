@@ -328,7 +328,6 @@ const TransactionList = () => {
                   Amount
                 </label>
                 <input
-                  type="number"
                   name="transactionAmount"
                   value={newTransaction.transactionAmount}
                   onChange={handleInputChange}
