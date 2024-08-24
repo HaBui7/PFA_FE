@@ -42,6 +42,9 @@ const Navbar = () => {
         <Link to="/goals" className="text-black hover:text-gray-600">
           Goals
         </Link>
+        <Link to="/budgeting" className="text-black hover:text-gray-600">
+          Budget
+        </Link>
         <Link to="/chatbot" className="text-black hover:text-gray-600">
           Assistant
           <span className="ml-1 bg-aiLogo text-aiLogo-foreground text-xs px-1 rounded">
@@ -121,6 +124,13 @@ const Navbar = () => {
           </div>
           <div className="flex flex-col items-center space-y-6">
             <Link
+              to="/dashboard"
+              className="text-black text-lg hover:text-gray-600"
+              onClick={() => setDrawerOpen(false)}
+            >
+              Dashboard
+            </Link>
+            <Link
               to="/transaction"
               className="text-black text-lg hover:text-gray-600"
               onClick={() => setDrawerOpen(false)}
@@ -133,6 +143,13 @@ const Navbar = () => {
               onClick={() => setDrawerOpen(false)}
             >
               Goals
+            </Link>
+            <Link
+              to="/budgeting"
+              className="text-black text-lg hover:text-gray-600"
+              onClick={() => setDrawerOpen(false)}
+            >
+              Budget
             </Link>
             <Link
               to="/chatbot"

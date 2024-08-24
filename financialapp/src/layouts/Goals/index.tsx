@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import GoalTransactionlist from "@/components/ui/goalTransactionList";
 import { Progress } from "@/components/ui/progress";
 
 import { Separator } from "@/components/ui/separator";
@@ -62,41 +63,12 @@ export default function SavingGoalPage() {
     );
   };
 
-  // const TransactionList = () => {
-  //   return (
-  //     <div className="space-y-4 flex flex-col">
-  //       {transactionData.map((transaction, index) => (
-  //         <Card key={index}>
-  //           <CardContent className="flex justify-between py-2 ">
-  //             <div className="">
-  //               <p className="font-bold ">{transaction.name}</p>
-  //               <p className="text-gray-600 text-sm">
-  //                 {new Date(transaction.date).toDateString()}
-  //               </p>
-  //             </div>
-  //             <p
-  //               className={`font-bold ${
-  //                 transaction.type === "income"
-  //                   ? "text-green-500"
-  //                   : "text-red-500"
-  //               }`}
-  //             >
-  //               {transaction.type === "income" ? "+" : "-"}$
-  //               {Math.abs(transaction.amount).toFixed(2)}
-  //             </p>
-  //           </CardContent>
-  //         </Card>
-  //       ))}
-  //     </div>
-  //   );
-  // };
-
   return (
     <div className="min-h-screen flex flex-col">
       <main className="flex-grow container mx-auto px-4 py-8">
         <Header />
         <GoalProgress />
-        {/* <TransactionList /> */}
+        <GoalTransactionlist />
       </main>
     </div>
   );

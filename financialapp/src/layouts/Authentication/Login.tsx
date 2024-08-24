@@ -15,13 +15,10 @@ const Login = () => {
   const handleLogin = async () => {
     try {
       // Send a POST request to the login route
-      const response = await axios.post(
-        "http://localhost:3000/api/auth/login",
-        {
-          email,
-          password,
-        }
-      );
+      const response = await axios.post("http://localhost:3000/api/login", {
+        email,
+        password,
+      });
 
       // If login is successful, store the token and navigate
       if (response.data.token) {

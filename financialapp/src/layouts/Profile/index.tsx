@@ -21,14 +21,11 @@ const ProfilePage = () => {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:3000/api/users/profile",
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("auth")}`, // Assuming you use JWT tokens
-            },
-          }
-        );
+        const response = await axios.get("http://localhost:3000/api/profile/", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("auth")}`, // Assuming you use JWT tokens
+          },
+        });
 
         const userData = response.data.data.user;
 

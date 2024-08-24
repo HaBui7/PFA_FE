@@ -30,9 +30,18 @@ const Signup = () => {
       setMessage("Please enter your birthday.");
       return false;
     }
+
+    // Validate that the birthday is not later than today
+    const selectedDate = new Date(birthday);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Ensure that today has no time part for comparison
+    if (selectedDate > today) {
+      setMessage("Birthday is not appropriate.");
+      return false;
+    }
+
     return true;
   };
-
   // Format the birthday to YYYY-MM-DD
   const formatDate = (date: string) => {
     const [year, month, day] = date.split("-");
@@ -47,15 +56,12 @@ const Signup = () => {
       const formattedBirthday = formatDate(birthday);
 
       // Send a POST request to the register route
-      const response = await axios.post(
-        "http://localhost:3000/api/auth/register",
-        {
-          name,
-          email,
-          password,
-          birthday: formattedBirthday, // Use formatted birthday
-        }
-      );
+      const response = await axios.post("http://localhost:3000/api/register", {
+        name,
+        email,
+        password,
+        birthday: formattedBirthday, // Use formatted birthday
+      });
 
       if (response.data.token) {
         localStorage.setItem("auth", response.data.token);
