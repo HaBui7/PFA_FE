@@ -64,7 +64,7 @@ const Login = () => {
                 name="Email"
                 type="text"
                 autoComplete="given-name"
-                className=" content-center block w-4/5 rounded-full border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="pl-5 content-center block w-4/5 rounded-full border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)} // Update email state
               />
@@ -79,29 +79,13 @@ const Login = () => {
                   type="password"
                   id="password"
                   name="password"
-                  className="items-center block w-4/5 rounded-full border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className=" pl-5 items-center block w-4/5 rounded-full border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)} // Update password state
                 />
               </div>
-              <div className="flex columns-2">
-                <input
-                  type="checkbox"
-                  name=""
-                  id=""
-                  className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 rounded-full"
-                />
-                <label className="ms-2 text-sm pb-5 text-gray-900 dark:text-gray-300">
-                  I agree to the terms & policy
-                </label>
-                <a
-                  href=""
-                  className="ml-20 text-sm pb-5 text-gray-900 dark:text-gray-300 pl-20 "
-                >
-                  Forget password?
-                </a>
-              </div>
-              <div className="flex flex-col items-center">
+
+              <div className="">
                 <button
                   type="button"
                   onClick={handleLogin} // Call handleLogin on button click
@@ -119,7 +103,7 @@ const Login = () => {
           </div>
           <div className="flex flex-col items-center">
             <img
-              className="w-7/12"
+              className="w-9/12 hidden md:flex"
               src="/src/assets/loginimage.svg"
               alt="Hello"
             />
