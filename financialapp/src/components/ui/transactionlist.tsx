@@ -45,6 +45,7 @@ const categoryOptions = [
   "Utilities",
   "Transportation",
   "Others",
+  "Income",
 ];
 
 const formatCurrency = (amount: number) => {
@@ -174,10 +175,14 @@ const TransactionList = () => {
 
     // Date validation: Check if the date is not in the future
     const selectedDate = new Date(newTransaction.date);
-
-    const today = new Date().getDay;
-    if (selectedDate.getDay > today) {
+    const today = new Date();
+    if (selectedDate > today) {
       errors.push("The date cannot be in the future.");
+    }
+
+    // Automatically set category to "Income" for income transactions
+    if (newTransaction.type === "income") {
+      newTransaction.category = "Income";
     }
 
     // If there are validation errors, display them and stop the submission

@@ -1,12 +1,12 @@
+"use client";
+
 import * as React from "react";
-import { TrendingUp } from "lucide-react";
-import { Label, Pie, PieChart, Cell } from "recharts";
 import axios from "axios";
+import { Label, Pie, PieChart } from "recharts";
 
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -27,43 +27,21 @@ interface Transaction {
   _id: string;
 }
 
-const categoryColors: { [key: string]: string } = {
-  Household: "#FF6384",
-  Shopping: "#36A2EB",
-  "Food & Dining": "#FFCE56",
-  Utilities: "#4BC0C0",
-  Transportation: "#9966FF",
-  Others: "#dbc8db",
-};
-
 const chartConfig = {
-  Household: {
-    label: "Household",
-    color: "#FF6384",
+  amount: {
+    label: "Amount",
   },
-  Shopping: {
-    label: "Shopping",
-    color: "#36A2EB",
+  income: {
+    label: "Income",
+    color: "#5cd170",
   },
-  "Food & Dining": {
-    label: "Food & Dining",
-    color: "#FFCE56",
-  },
-  Utilities: {
-    label: "Utilities",
-    color: "#4BC0C0",
-  },
-  Transportation: {
-    label: "Transportation",
-    color: "#9966FF",
-  },
-  Others: {
-    label: "Others",
-    color: "#dbc8db",
+  expense: {
+    label: "Expense",
+    color: "#d1352a",
   },
 } satisfies ChartConfig;
 
-export function PieTransaction() {
+export function PieTotal() {
   const [transactions, setTransactions] = React.useState<Transaction[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
@@ -90,27 +68,21 @@ export function PieTransaction() {
     fetchTransactions();
   }, []);
 
-  const chartData = React.useMemo(() => {
-    const data = transactions
-      .filter((transaction) => transaction.type === "expense")
-      .reduce((acc, transaction) => {
-        const category = transaction.category;
-        if (!acc[category]) {
-          acc[category] = {
-            category,
-            transactionAmount: 0,
-            fill: categoryColors[category],
-          };
-        }
-        acc[category].transactionAmount += transaction.transactionAmount;
-        return acc;
-      }, {} as Record<string, { category: string; transactionAmount: number; fill: string }>);
+  const totalIncome = transactions
+    .filter((transaction) => transaction.type === "income")
+    .reduce((acc, transaction) => acc + transaction.transactionAmount, 0);
 
-    return Object.values(data);
-  }, [transactions]);
+  const totalExpense = transactions
+    .filter((transaction) => transaction.type === "expense")
+    .reduce((acc, transaction) => acc + transaction.transactionAmount, 0);
 
-  const totalTransactionAmount = React.useMemo(() => {
-    return chartData.reduce((acc, curr) => acc + curr.transactionAmount, 0);
+  const chartData = [
+    { category: "Income", amount: totalIncome, fill: "#5cd170" },
+    { category: "Expense", amount: totalExpense, fill: "#d1352a" },
+  ];
+
+  const totalAmount = React.useMemo(() => {
+    return chartData.reduce((acc, curr) => acc + curr.amount, 0);
   }, [chartData]);
 
   if (loading) return <div>Loading...</div>;
@@ -119,7 +91,7 @@ export function PieTransaction() {
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Category Expense</CardTitle>
+        <CardTitle>Income vs Expense</CardTitle>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
@@ -133,14 +105,11 @@ export function PieTransaction() {
             />
             <Pie
               data={chartData}
-              dataKey="transactionAmount"
+              dataKey="amount"
               nameKey="category"
               innerRadius={60}
               strokeWidth={5}
             >
-              {chartData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.fill} />
-              ))}
               <Label
                 content={({ viewBox }) => {
                   if (viewBox && "cx" in viewBox && "cy" in viewBox) {
@@ -156,14 +125,14 @@ export function PieTransaction() {
                           y={viewBox.cy}
                           className="fill-foreground text-3xl font-bold"
                         >
-                          {totalTransactionAmount.toLocaleString()}
+                          {totalAmount.toLocaleString()}
                         </tspan>
                         <tspan
                           x={viewBox.cx}
                           y={(viewBox.cy || 0) + 24}
                           className="fill-muted-foreground"
                         >
-                          Transaction Amount
+                          Amount
                         </tspan>
                       </text>
                     );
@@ -176,7 +145,7 @@ export function PieTransaction() {
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
         <div className="leading-none text-muted-foreground">
-          Showing the expense amout of each category
+          Showing the income and expense amounts
         </div>
       </CardFooter>
     </Card>

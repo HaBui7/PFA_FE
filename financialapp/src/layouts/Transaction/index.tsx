@@ -1,10 +1,6 @@
-<<<<<<< Updated upstream
-import Transactionlist from "@/components/ui/transactionlist";
-import PieTransaction from "@/components/ui/pie-transaction";
-=======
-import Transactionlist from "@/components/ui/forTransaction/transactionlist";
-import { PieTransaction } from "@/components/ui/forTransaction/pie-transaction";
->>>>>>> Stashed changes
+import TransactionList from "@/components/ui/transactionlist";
+import { PieTransaction } from "@/components/ui/pie-transaction";
+import { PieTotal } from "@/components/ui/pie-total";
 const TransactionPage = () => {
   return (
     <div>
@@ -16,9 +12,11 @@ const TransactionPage = () => {
 
         <p className="py-5">Welcome back !</p>
       </div>
+      <div className="flex"></div>
       <PieTransaction></PieTransaction>
+      <PieTotal></PieTotal>
       <div className="pb-10 flex flex-col items-center w-6/12 mx-auto"></div>
-      <Transactionlist></Transactionlist>
+      <TransactionList></TransactionList>
     </div>
   );
 };
