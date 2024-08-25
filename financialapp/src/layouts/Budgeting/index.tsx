@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import { Settings } from "lucide-react";
 
@@ -19,7 +17,8 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { BudgetPieChart } from "@/components/ui/budgetPieChart";
+import { BudgetPieChart } from "@/components/ui/forBudget/budgetPieChart";
+import ErrorMessage from "@/components/ui/errorMessage";
 
 const initialBudgetData = [
   {
@@ -161,13 +160,13 @@ export default function Budget() {
               </Button>
             </>
           ) : (
-            <>
+            <div className="text-lg">
               Start setting your budget for a specific duration to track your
               expenses!
               <Button size="sm" className="ml-4" onClick={handleOpenSettings}>
                 Start Now
               </Button>
-            </>
+            </div>
           )}
         </CardDescription>
       </CardHeader>
@@ -275,11 +274,7 @@ export default function Budget() {
               </div>
             ))}
             {/* Display error message */}
-            {error && (
-              <p className="text-red-500 font-bold text-sm text-center">
-                {error}
-              </p>
-            )}
+            {error && <ErrorMessage message={error} />}
           </div>
           <DialogFooter>
             <Button variant="secondary" onClick={() => setIsModalOpen(false)}>
