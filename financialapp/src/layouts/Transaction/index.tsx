@@ -1,5 +1,10 @@
+<<<<<<< Updated upstream
 import Transactionlist from "@/components/ui/transactionlist";
 import PieTransaction from "@/components/ui/pie-transaction";
+=======
+import Transactionlist from "@/components/ui/forTransaction/transactionlist";
+import { PieTransaction } from "@/components/ui/forTransaction/pie-transaction";
+>>>>>>> Stashed changes
 const TransactionPage = () => {
   return (
     <div>

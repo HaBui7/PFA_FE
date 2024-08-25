@@ -44,6 +44,7 @@ const categoryOptions = [
   "Food & Dining",
   "Utilities",
   "Transportation",
+  "Others",
 ];
 
 const formatCurrency = (amount: number) => {
