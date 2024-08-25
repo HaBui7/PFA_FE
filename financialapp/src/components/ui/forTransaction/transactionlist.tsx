@@ -33,7 +33,7 @@ interface Transaction {
 const categoryIcons = {
   Household: <Home />,
   Shopping: <ShoppingCart />,
-  "Food & Dining": <Utensils />,
+  Food: <Utensils />,
   Utilities: <DollarSign />,
   Transportation: <Bus />,
 };
@@ -41,7 +41,7 @@ const categoryIcons = {
 const categoryOptions = [
   "Household",
   "Shopping",
-  "Food & Dining",
+  "Food",
   "Utilities",
   "Transportation",
 ];
@@ -149,6 +149,9 @@ const TransactionList = () => {
 
     // Frontend validation
     const errors = [];
+    if (newTransaction.type === "income") {
+      newTransaction.category = "";
+    }
     if (!newTransaction.title) {
       errors.push("Title is required.");
     }
@@ -186,6 +189,7 @@ const TransactionList = () => {
     }
 
     try {
+      console.log(newTransaction);
       const response = await axios.post(
         "http://localhost:3000/api/transactions/",
         newTransaction,
@@ -201,7 +205,6 @@ const TransactionList = () => {
     } catch (err) {
       console.error("Error adding transaction:", err);
     }
-    window.location.reload();
   };
 
   if (loading) {

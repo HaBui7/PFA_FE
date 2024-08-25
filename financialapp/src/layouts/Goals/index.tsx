@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import ErrorMessage from "@/components/ui/errorMessage"; // Import the ErrorAlert component
+import SavingToggle from "@/components/ui/forSaving/savingToggle";
 
 export default function SavingGoalPage() {
   const [savingData, setSavingData] = useState({
@@ -315,6 +316,7 @@ export default function SavingGoalPage() {
                 >
                   Delete
                 </Button>
+                <SavingToggle />
               </div>
             </div>
 
