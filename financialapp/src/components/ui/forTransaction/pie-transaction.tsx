@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import * as React from "react";
 import { TrendingUp } from "lucide-react";
-import { Label, Pie, PieChart } from "recharts";
+import { Label, Pie, PieChart, Cell } from "recharts";
+import axios from "axios";
+
 import {
   Card,
   CardContent,
@@ -19,20 +20,12 @@ import {
 
 interface Transaction {
   date: string;
-  type: string; // "income" or "expense"
+  type: string;
   category: string;
   transactionAmount: number;
   title: string;
   _id: string;
 }
-
-const categoryOptions = [
-  "Household",
-  "Shopping",
-  "Food & Dining",
-  "Utilities",
-  "Transportation",
-];
 
 const categoryColors: { [key: string]: string } = {
   Household: "#FF6384",
@@ -40,22 +33,43 @@ const categoryColors: { [key: string]: string } = {
   "Food & Dining": "#FFCE56",
   Utilities: "#4BC0C0",
   Transportation: "#9966FF",
+  Others: "#dbc8db",
 };
 
 const chartConfig = {
-  transactionAmount: {
-    label: "Transaction Amount",
+  Household: {
+    label: "Household",
+    color: "#FF6384",
+  },
+  Shopping: {
+    label: "Shopping",
+    color: "#36A2EB",
+  },
+  "Food & Dining": {
+    label: "Food & Dining",
+    color: "#FFCE56",
+  },
+  Utilities: {
+    label: "Utilities",
+    color: "#4BC0C0",
+  },
+  Transportation: {
+    label: "Transportation",
+    color: "#9966FF",
+  },
+  Others: {
+    label: "Others",
+    color: "#dbc8db",
   },
 } satisfies ChartConfig;
 
-const PieTransaction: React.FC = () => {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export function PieTransaction() {
+  const [transactions, setTransactions] = React.useState<Transaction[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const fetchTransactions = async () => {
-      setLoading(true);
       try {
         const response = await axios.get(
           "http://localhost:3000/api/transactions/",
@@ -65,11 +79,10 @@ const PieTransaction: React.FC = () => {
             },
           }
         );
-
         setTransactions(response.data.data.transactions);
+        setLoading(false);
       } catch (err) {
         if (err instanceof Error) setError(err.message);
-      } finally {
         setLoading(false);
       }
     };
@@ -77,32 +90,24 @@ const PieTransaction: React.FC = () => {
     fetchTransactions();
   }, []);
 
-  const aggregateTransactionsByCategory = (transactions: Transaction[]) => {
-    const aggregatedData: { [key: string]: number } = {};
-
-    transactions.forEach((transaction) => {
-      if (aggregatedData[transaction.category]) {
-        if (transaction.type === "income") {
-          aggregatedData[transaction.category] += transaction.transactionAmount;
-        } else if (transaction.type === "expense") {
-          aggregatedData[transaction.category] -= transaction.transactionAmount;
+  const chartData = React.useMemo(() => {
+    const data = transactions
+      .filter((transaction) => transaction.type === "expense")
+      .reduce((acc, transaction) => {
+        const category = transaction.category;
+        if (!acc[category]) {
+          acc[category] = {
+            category,
+            transactionAmount: 0,
+            fill: categoryColors[category],
+          };
         }
-      } else {
-        aggregatedData[transaction.category] =
-          transaction.type === "income"
-            ? transaction.transactionAmount
-            : -transaction.transactionAmount;
-      }
-    });
+        acc[category].transactionAmount += transaction.transactionAmount;
+        return acc;
+      }, {} as Record<string, { category: string; transactionAmount: number; fill: string }>);
 
-    return categoryOptions.map((category) => ({
-      category,
-      transactionAmount: aggregatedData[category] || 0,
-      fill: categoryColors[category] || "#0000FF", // Default to blue if no color is found
-    }));
-  };
-
-  const chartData = aggregateTransactionsByCategory(transactions);
+    return Object.values(data);
+  }, [transactions]);
 
   const totalTransactionAmount = React.useMemo(() => {
     return chartData.reduce((acc, curr) => acc + curr.transactionAmount, 0);
@@ -112,10 +117,9 @@ const PieTransaction: React.FC = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <Card className="flex flex-col border-none">
+    <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Pie Chart - Donut with Text</CardTitle>
-        <CardDescription>Transaction Data</CardDescription>
+        <CardTitle>Category Expense</CardTitle>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
@@ -134,6 +138,9 @@ const PieTransaction: React.FC = () => {
               innerRadius={60}
               strokeWidth={5}
             >
+              {chartData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.fill} />
+              ))}
               <Label
                 content={({ viewBox }) => {
                   if (viewBox && "cx" in viewBox && "cy" in viewBox) {
@@ -156,7 +163,7 @@ const PieTransaction: React.FC = () => {
                           y={(viewBox.cy || 0) + 24}
                           className="fill-muted-foreground"
                         >
-                          Total Amount
+                          Transaction Amount
                         </tspan>
                       </text>
                     );
@@ -167,16 +174,11 @@ const PieTransaction: React.FC = () => {
           </PieChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col gap-2 text-sm ">
-        <div className="flex items-center gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
+      <CardFooter className="flex-col gap-2 text-sm">
         <div className="leading-none text-muted-foreground">
-          Showing total transaction amounts for the selected period
+          Showing the expense amout of each category
         </div>
       </CardFooter>
     </Card>
   );
-};
-
-export default PieTransaction;
+}
