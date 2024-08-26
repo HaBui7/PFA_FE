@@ -1,6 +1,5 @@
-import TransactionList from "@/components/ui/transactionlist";
-import { PieTransaction } from "@/components/ui/pie-transaction";
-import { PieTotal } from "@/components/ui/pie-total";
+import Transactionlist from "@/components/ui/transactionlist";
+import PieTransaction from "@/components/ui/pie-transaction";
 const TransactionPage = () => {
   return (
     <div>

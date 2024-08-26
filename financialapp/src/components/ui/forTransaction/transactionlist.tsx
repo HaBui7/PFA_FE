@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import ErrorAlert from "./errorMessage";
-import ConfirmModal from "./confirmModal";
-import { Button } from "./button";
+import ErrorAlert from "../errorMessage";
+import ConfirmModal from "../confirmModal";
+import { Button } from "../button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "./dialog";
+} from "../dialog";
 import {
   Pencil,
   Trash2,
@@ -33,7 +33,7 @@ interface Transaction {
 const categoryIcons = {
   Household: <Home />,
   Shopping: <ShoppingCart />,
-  "Food & Dining": <Utensils />,
+  Food: <Utensils />,
   Utilities: <DollarSign />,
   Transportation: <Bus />,
 };
@@ -41,7 +41,7 @@ const categoryIcons = {
 const categoryOptions = [
   "Household",
   "Shopping",
-  "Food & Dining",
+  "Food",
   "Utilities",
   "Transportation",
   "Others",
@@ -151,6 +151,9 @@ const TransactionList = () => {
 
     // Frontend validation
     const errors = [];
+    if (newTransaction.type === "income") {
+      newTransaction.category = "";
+    }
     if (!newTransaction.title) {
       errors.push("Title is required.");
     }
@@ -192,6 +195,7 @@ const TransactionList = () => {
     }
 
     try {
+      console.log(newTransaction);
       const response = await axios.post(
         "http://localhost:3000/api/transactions/",
         newTransaction,
@@ -207,7 +211,6 @@ const TransactionList = () => {
     } catch (err) {
       console.error("Error adding transaction:", err);
     }
-    window.location.reload();
   };
 
   if (loading) {
@@ -230,7 +233,7 @@ const TransactionList = () => {
         currentTransactions.map((transaction) => (
           <div
             key={transaction._id}
-            className="border-b border-gray-300 py-4 flex items-center justify-between"
+            className="border-b border-gray-300 pb-4 flex items-center justify-between"
           >
             <div className="flex items-center space-x-3">
               <div className="p-2 bg-gray-100 rounded-full">
@@ -334,7 +337,6 @@ const TransactionList = () => {
                   Amount
                 </label>
                 <input
-                  type="number"
                   name="transactionAmount"
                   value={newTransaction.transactionAmount}
                   onChange={handleInputChange}
