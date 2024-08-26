@@ -1,6 +1,6 @@
 import TransactionList from "@/components/ui/forTransaction/transactionlist";
 import { PieTransaction } from "@/components/ui/forTransaction/pie-transaction";
-import { PieTotal } from "@/components/ui/pie-total";
+import { PieTotal } from "@/components/ui/forTransaction/pie-total";
 const TransactionPage = () => {
   return (
     <div>

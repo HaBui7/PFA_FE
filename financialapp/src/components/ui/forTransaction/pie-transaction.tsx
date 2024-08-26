@@ -28,12 +28,12 @@ interface Transaction {
 }
 
 const categoryColors: { [key: string]: string } = {
-  Household: "#FF6384",
-  Shopping: "#36A2EB",
-  "Food & Dining": "#FFCE56",
-  Utilities: "#4BC0C0",
-  Transportation: "#9966FF",
-  Others: "#dbc8db",
+  household: "#FF6384",
+  shopping: "#36A2EB",
+  food: "#FFCE56",
+  utilities: "#4BC0C0",
+  transportation: "#9966FF",
+  others: "#dbc8db",
 };
 
 const chartConfig = {
@@ -45,7 +45,7 @@ const chartConfig = {
     label: "Shopping",
     color: "#36A2EB",
   },
-  "Food & Dining": {
+  Food: {
     label: "Food & Dining",
     color: "#FFCE56",
   },
@@ -93,15 +93,18 @@ export function PieTransaction() {
   const chartData = React.useMemo(() => {
     const data = transactions
       .filter((transaction) => transaction.type === "expense")
+
       .reduce((acc, transaction) => {
         const category = transaction.category;
-        if (!acc[category]) {
-          acc[category] = {
-            category,
-            transactionAmount: 0,
-            fill: categoryColors[category],
-          };
-        }
+
+        console.log(`Adding category: ${category}`);
+        acc[category] = {
+          category,
+          transactionAmount: 0,
+          fill: categoryColors[category] || "#000000", // Default to black if category not found
+        };
+        console.log(`Fill color: ${acc[category].fill}`);
+
         acc[category].transactionAmount += transaction.transactionAmount;
         return acc;
       }, {} as Record<string, { category: string; transactionAmount: number; fill: string }>);

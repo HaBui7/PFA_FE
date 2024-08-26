@@ -127,6 +127,7 @@ const TransactionList = () => {
           transactions.filter((t) => t._id !== transactionToDelete._id)
         );
         setIsDeleteModalOpen(false);
+        window.location.reload();
       } catch (err) {
         console.error("Error deleting transaction:", err);
       }
@@ -208,6 +209,7 @@ const TransactionList = () => {
 
       setTransactions([...transactions, response.data.data.transaction]);
       setIsModalOpen(false);
+      window.location.reload();
     } catch (err) {
       console.error("Error adding transaction:", err);
     }
