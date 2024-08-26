@@ -30,7 +30,7 @@ interface Transaction {
 const categoryColors: { [key: string]: string } = {
   Household: "#FF6384",
   Shopping: "#36A2EB",
-  "Food & Dining": "#FFCE56",
+  Food: "#FFCE56",
   Utilities: "#4BC0C0",
   Transportation: "#9966FF",
   Others: "#dbc8db",
@@ -45,7 +45,7 @@ const chartConfig = {
     label: "Shopping",
     color: "#36A2EB",
   },
-  "Food & Dining": {
+  Food: {
     label: "Food & Dining",
     color: "#FFCE56",
   },
@@ -99,7 +99,7 @@ export function PieTransaction() {
           acc[category] = {
             category,
             transactionAmount: 0,
-            fill: categoryColors[category],
+            fill: "categoryColors[category]",
           };
         }
         acc[category].transactionAmount += transaction.transactionAmount;
