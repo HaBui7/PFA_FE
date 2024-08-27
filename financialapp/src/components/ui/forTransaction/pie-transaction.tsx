@@ -34,9 +34,14 @@ const categoryColors: { [key: string]: string } = {
   utilities: "#4BC0C0",
   transportation: "#9966FF",
   others: "#dbc8db",
+  saving: "#a1ede9",
 };
 
 const chartConfig = {
+  Saving: {
+    label: "Saving",
+    color: "#a1ede9",
+  },
   Household: {
     label: "Household",
     color: "#FF6384",
@@ -120,7 +125,7 @@ export function PieTransaction() {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col border-none p-4">
       <CardHeader className="items-center pb-0">
         <CardTitle>Category Expense</CardTitle>
       </CardHeader>
@@ -153,22 +158,7 @@ export function PieTransaction() {
                         y={viewBox.cy}
                         textAnchor="middle"
                         dominantBaseline="middle"
-                      >
-                        <tspan
-                          x={viewBox.cx}
-                          y={viewBox.cy}
-                          className="fill-foreground text-3xl font-bold"
-                        >
-                          {totalTransactionAmount.toLocaleString()}
-                        </tspan>
-                        <tspan
-                          x={viewBox.cx}
-                          y={(viewBox.cy || 0) + 24}
-                          className="fill-muted-foreground"
-                        >
-                          Transaction Amount
-                        </tspan>
-                      </text>
+                      ></text>
                     );
                   }
                 }}
@@ -177,11 +167,7 @@ export function PieTransaction() {
           </PieChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col gap-2 text-sm">
-        <div className="leading-none text-muted-foreground">
-          Showing the expense amout of each category
-        </div>
-      </CardFooter>
+      <CardFooter className="flex-col gap-2 text-sm"></CardFooter>
     </Card>
   );
 }

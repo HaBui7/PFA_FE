@@ -21,7 +21,7 @@ const TransactionPage = () => {
         </div>
       </div>
 
-      <div className="pt-10 pb-10 flex flex-col items-center w-6/12 mx-auto"></div>
+      <div className="flex flex-col items-center w-6/12 "></div>
       <TransactionList></TransactionList>
     </div>
   );

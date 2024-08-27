@@ -95,7 +95,7 @@ export function PieTotal() {
       <CardHeader className="items-center pb-0">
         <CardTitle>Income vs Expense</CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 pb-0">
+      <CardContent className="flex-1 pb-2">
         <ChartContainer
           config={chartConfig}
           className="mx-auto aspect-square max-h-[250px]"
@@ -121,22 +121,7 @@ export function PieTotal() {
                         y={viewBox.cy}
                         textAnchor="middle"
                         dominantBaseline="middle"
-                      >
-                        <tspan
-                          x={viewBox.cx}
-                          y={viewBox.cy}
-                          className="fill-foreground text-3xl font-bold"
-                        >
-                          {totalAmount.toLocaleString()}
-                        </tspan>
-                        <tspan
-                          x={viewBox.cx}
-                          y={(viewBox.cy || 0) + 24}
-                          className="fill-muted-foreground"
-                        >
-                          Amount
-                        </tspan>
-                      </text>
+                      ></text>
                     );
                   }
                 }}
@@ -145,11 +130,7 @@ export function PieTotal() {
           </PieChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col gap-2 text-sm">
-        <div className="leading-none text-muted-foreground">
-          Showing the income and expense amounts
-        </div>
-      </CardFooter>
+      <CardFooter className="flex-col gap-2 text-sm"></CardFooter>
     </Card>
   );
 }
