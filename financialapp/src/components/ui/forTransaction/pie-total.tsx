@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import axios from "axios";
 import { Label, Pie, PieChart } from "recharts";
@@ -88,8 +86,12 @@ export function PieTotal() {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
+  if (transactions.length === 0) {
+    return <div>No transactions available.</div>;
+  }
+
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col border-none p-4 ">
       <CardHeader className="items-center pb-0">
         <CardTitle>Income vs Expense</CardTitle>
       </CardHeader>
