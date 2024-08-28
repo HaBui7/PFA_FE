@@ -167,7 +167,9 @@ export function PieTransaction() {
           </PieChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col gap-2 text-sm"></CardFooter>
+      <CardFooter className="flex-col gap-2 text-sm">
+        <div className="leading-none text-muted-foreground"></div>
+      </CardFooter>
     </Card>
   );
 }

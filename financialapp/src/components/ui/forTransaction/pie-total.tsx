@@ -96,10 +96,7 @@ export function PieTotal() {
         <CardTitle>Income vs Expense</CardTitle>
       </CardHeader>
       <CardContent className="flex-1 pb-2">
-        <ChartContainer
-          config={chartConfig}
-          className="mx-auto aspect-square max-h-[250px]"
-        >
+        <ChartContainer config={chartConfig} className="mx-auto aspect-square ">
           <PieChart>
             <ChartTooltip
               cursor={false}
