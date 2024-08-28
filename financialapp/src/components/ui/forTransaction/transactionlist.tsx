@@ -229,63 +229,65 @@ const TransactionList = () => {
         <h2 className="text-lg font-bold">Latest Transaction</h2>
         <Button onClick={() => setIsModalOpen(true)}>Add</Button>
       </div>
-      {currentTransactions.length === 0 ? (
-        <p>You have no transactions yet.</p>
-      ) : (
-        currentTransactions.map((transaction) => (
-          <div
-            key={transaction._id}
-            className="border-b border-gray-300 pb-4 flex items-center justify-between"
-          >
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-gray-100 rounded-full">
-                {categoryIcons[
-                  transaction.category as keyof typeof categoryIcons
-                ] || <DollarSign />}
+      <div className="min-h-[15rem]">
+        {currentTransactions.length === 0 ? (
+          <p>You have no transactions yet.</p>
+        ) : (
+          currentTransactions.map((transaction) => (
+            <div
+              key={transaction._id}
+              className="border-b border-gray-300 pb-4 flex items-center justify-between mb-4"
+            >
+              <div className="flex items-center space-x-3">
+                <div className="p-2 bg-gray-100 rounded-full">
+                  {categoryIcons[
+                    transaction.category as keyof typeof categoryIcons
+                  ] || <DollarSign />}
+                </div>
+                <div>
+                  <p className="font-bold">{transaction.title}</p>
+                  <p className="text-gray-600 text-sm">
+                    {new Date(transaction.date).toLocaleString("en-US", {
+                      weekday: "short",
+                      day: "2-digit",
+                      month: "short",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="font-bold">{transaction.title}</p>
-                <p className="text-gray-600 text-sm">
-                  {new Date(transaction.date).toLocaleString("en-US", {
-                    weekday: "short",
-                    day: "2-digit",
-                    month: "short",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
+              <div className="flex items-center space-x-4">
+                <p
+                  className={`font-bold ${
+                    transaction.type === "income"
+                      ? "text-green-500"
+                      : "text-red-500"
+                  }`}
+                >
+                  {transaction.type === "income" ? "+" : "-"}
+                  {formatCurrency(Math.abs(transaction.transactionAmount))}
                 </p>
+                <button className="text-gray-500">
+                  <Pencil />
+                </button>
+
+                <Trash2
+                  onClick={() => handleDeleteClick(transaction)}
+                  color="red"
+                />
+                <ConfirmModal
+                  isOpen={isDeleteModalOpen}
+                  onClose={() => setIsDeleteModalOpen(false)}
+                  onConfirm={handleDeleteConfirm}
+                  title="Delete Transaction"
+                  message="Are you sure you want to delete this transaction? This action cannot be undone."
+                />
               </div>
             </div>
-            <div className="flex items-center space-x-4">
-              <p
-                className={`font-bold ${
-                  transaction.type === "income"
-                    ? "text-green-500"
-                    : "text-red-500"
-                }`}
-              >
-                {transaction.type === "income" ? "+" : "-"}
-                {formatCurrency(Math.abs(transaction.transactionAmount))}
-              </p>
-              <button className="text-gray-500">
-                <Pencil />
-              </button>
-
-              <Trash2
-                onClick={() => handleDeleteClick(transaction)}
-                color="red"
-              />
-              <ConfirmModal
-                isOpen={isDeleteModalOpen}
-                onClose={() => setIsDeleteModalOpen(false)}
-                onConfirm={handleDeleteConfirm}
-                title="Delete Transaction"
-                message="Are you sure you want to delete this transaction? This action cannot be undone."
-              />
-            </div>
-          </div>
-        ))
-      )}
+          ))
+        )}
+      </div>
 
       {/* Modal for Adding Transaction */}
       {isModalOpen && (
