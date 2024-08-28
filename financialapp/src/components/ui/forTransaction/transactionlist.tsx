@@ -224,7 +224,7 @@ const TransactionList = () => {
   }
 
   return (
-    <div className="space-y-4 m-auto flex flex-col w-8/12">
+    <div className="space-y-4 m-auto flex flex-col w-8/12 pt-10">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-bold">Latest Transaction</h2>
         <Button onClick={() => setIsModalOpen(true)}>Add</Button>
