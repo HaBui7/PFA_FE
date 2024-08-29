@@ -330,12 +330,17 @@ const TransactionList = () => {
                     Select Category
                   </option>
                   {categoryOptions.map((option) => (
-                    <option key={option} value={option}>
+                    <option
+                      key={option}
+                      value={option}
+                      disabled={option === "Income"}
+                    >
                       {option}
                     </option>
                   ))}
                 </select>
               </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Amount
