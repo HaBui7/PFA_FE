@@ -386,7 +386,7 @@ const TransactionList = () => {
           </DialogContent>
         </Dialog>
       )}
-      <div className="flex flex-col items-center pt-20">
+      <div className="flex flex-col items-center pt-10">
         <ReactPaginate
           previousLabel={"< Previous"}
           nextLabel={"Next >"}
