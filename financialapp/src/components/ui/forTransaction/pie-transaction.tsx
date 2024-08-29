@@ -34,6 +34,7 @@ const categoryColors: { [key: string]: string } = {
   utilities: "#4BC0C0",
   transportation: "#9966FF",
   others: "#dbc8db",
+  saving: "#a1ede9",
 };
 
 const chartConfig = {
@@ -60,6 +61,10 @@ const chartConfig = {
   Others: {
     label: "Others",
     color: "#dbc8db",
+  },
+  Saving: {
+    label: "Saving",
+    color: "#a1ede9",
   },
 } satisfies ChartConfig;
 
@@ -118,9 +123,12 @@ export function PieTransaction() {
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
+  if (transactions.length === 0) {
+    return <div>No transactions available.</div>;
+  }
 
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col border-none p-4">
       <CardHeader className="items-center pb-0">
         <CardTitle>Category Expense</CardTitle>
       </CardHeader>
@@ -153,22 +161,7 @@ export function PieTransaction() {
                         y={viewBox.cy}
                         textAnchor="middle"
                         dominantBaseline="middle"
-                      >
-                        <tspan
-                          x={viewBox.cx}
-                          y={viewBox.cy}
-                          className="fill-foreground text-3xl font-bold"
-                        >
-                          {totalTransactionAmount.toLocaleString()}
-                        </tspan>
-                        <tspan
-                          x={viewBox.cx}
-                          y={(viewBox.cy || 0) + 24}
-                          className="fill-muted-foreground"
-                        >
-                          Transaction Amount
-                        </tspan>
-                      </text>
+                      ></text>
                     );
                   }
                 }}
@@ -178,8 +171,11 @@ export function PieTransaction() {
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
+        <div className="flex items-center gap-2 font-medium leading-none">
+          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+        </div>
         <div className="leading-none text-muted-foreground">
-          Showing the expense amout of each category
+          Showing total visitors for the last 6 months
         </div>
       </CardFooter>
     </Card>

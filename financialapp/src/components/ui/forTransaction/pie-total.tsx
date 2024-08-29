@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import axios from "axios";
 import { Label, Pie, PieChart } from "recharts";
@@ -17,6 +15,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { TrendingUp } from "lucide-react";
 
 interface Transaction {
   date: string;
@@ -88,16 +87,17 @@ export function PieTotal() {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
+  if (transactions.length === 0) {
+    return <div>No transactions available.</div>;
+  }
+
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col border-none p-4 ">
       <CardHeader className="items-center pb-0">
         <CardTitle>Income vs Expense</CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 pb-0">
-        <ChartContainer
-          config={chartConfig}
-          className="mx-auto aspect-square max-h-[250px]"
-        >
+      <CardContent className="flex-1 pb-2">
+        <ChartContainer config={chartConfig} className="mx-auto aspect-square ">
           <PieChart>
             <ChartTooltip
               cursor={false}
@@ -119,22 +119,7 @@ export function PieTotal() {
                         y={viewBox.cy}
                         textAnchor="middle"
                         dominantBaseline="middle"
-                      >
-                        <tspan
-                          x={viewBox.cx}
-                          y={viewBox.cy}
-                          className="fill-foreground text-3xl font-bold"
-                        >
-                          {totalAmount.toLocaleString()}
-                        </tspan>
-                        <tspan
-                          x={viewBox.cx}
-                          y={(viewBox.cy || 0) + 24}
-                          className="fill-muted-foreground"
-                        >
-                          Amount
-                        </tspan>
-                      </text>
+                      ></text>
                     );
                   }
                 }}
@@ -144,8 +129,11 @@ export function PieTotal() {
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
+        <div className="flex items-center gap-2 font-medium leading-none">
+          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+        </div>
         <div className="leading-none text-muted-foreground">
-          Showing the income and expense amounts
+          Showing total visitors for the last 6 months
         </div>
       </CardFooter>
     </Card>
