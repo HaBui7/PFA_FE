@@ -28,42 +28,42 @@ interface Transaction {
 }
 
 const categoryColors: { [key: string]: string } = {
-  household: "#FF6384",
-  shopping: "#36A2EB",
-  food: "#FFCE56",
-  utilities: "#4BC0C0",
-  transportation: "#9966FF",
-  others: "#dbc8db",
-  saving: "#a1ede9",
+  Household: "#FF6384",
+  Shopping: "#36A2EB",
+  Food: "#FFCE56",
+  Utilities: "#4BC0C0",
+  Transportation: "#9966FF",
+  Others: "#dbc8db",
+  Saving: "#a1ede9",
 };
 
 const chartConfig = {
   Household: {
-    label: "Household",
+    label: "Household ",
     color: "#FF6384",
   },
   Shopping: {
-    label: "Shopping",
+    label: "Shopping ",
     color: "#36A2EB",
   },
   Food: {
-    label: "Food & Dining",
+    label: "Food & Dining ",
     color: "#FFCE56",
   },
   Utilities: {
-    label: "Utilities",
+    label: "Utilities ",
     color: "#4BC0C0",
   },
   Transportation: {
-    label: "Transportation",
+    label: "Transportation ",
     color: "#9966FF",
   },
   Others: {
-    label: "Others",
+    label: "Others ",
     color: "#dbc8db",
   },
   Saving: {
-    label: "Saving",
+    label: "Saving ",
     color: "#a1ede9",
   },
 } satisfies ChartConfig;
@@ -133,10 +133,7 @@ export function PieTransaction() {
         <CardTitle>Category Expense</CardTitle>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
-        <ChartContainer
-          config={chartConfig}
-          className="mx-auto aspect-square max-h-[250px]"
-        >
+        <ChartContainer config={chartConfig} className="mx-auto aspect-square ">
           <PieChart>
             <ChartTooltip
               cursor={false}

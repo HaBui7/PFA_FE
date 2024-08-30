@@ -314,32 +314,6 @@ const TransactionList = () => {
                   required
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Category
-                </label>
-                <select
-                  name="category"
-                  value={newTransaction.category}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                  disabled={newTransaction.type === "income"}
-                  required={newTransaction.type === "expense"}
-                >
-                  <option value="" disabled>
-                    Select Category
-                  </option>
-                  {categoryOptions.map((option) => (
-                    <option
-                      key={option}
-                      value={option}
-                      disabled={option === "Income"}
-                    >
-                      {option}
-                    </option>
-                  ))}
-                </select>
-              </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700">
@@ -379,6 +353,32 @@ const TransactionList = () => {
                 >
                   <option value="income">Income</option>
                   <option value="expense">Expense</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Category
+                </label>
+                <select
+                  name="category"
+                  value={newTransaction.category}
+                  onChange={handleInputChange}
+                  className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  disabled={newTransaction.type === "income"}
+                  required={newTransaction.type === "expense"}
+                >
+                  <option value="" disabled>
+                    Select Category
+                  </option>
+                  {categoryOptions.map((option) => (
+                    <option
+                      key={option}
+                      value={option}
+                      disabled={option === "Income"}
+                    >
+                      {option}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
