@@ -1,95 +1,203 @@
-"use client";
-
 import * as React from "react";
-import { TrendingUp, Settings, Send, RefreshCw } from "lucide-react";
+import { useParams, useNavigate } from "react-router-dom";
 import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+  fetchConversations,
+  generateResponse,
+  getTransactionCount,
+} from "@/components/ui/forChatbot/chatbotUtils";
+import ChatbotTemplate from "@/components/ui/forChatbot/chatbotTemplate";
 
 export default function Chatbot() {
+  const { conversationId } = useParams<{ conversationId?: string }>();
+  const [inputValue, setInputValue] = React.useState("");
+  const [isPopupVisible, setIsPopupVisible] = React.useState(false);
+  const [conversations, setConversations] = React.useState([]);
+  const [messages, setMessages] = React.useState([]);
+  const [title, setTitle] = React.useState("");
+  const [popupMessage, setPopupMessage] = React.useState<{
+    type: string;
+    message: string;
+  } | null>(null);
+  const [isSettingsPopupVisible, setIsSettingsPopupVisible] =
+    React.useState(false);
+  const [responseLength, setResponseLength] = React.useState("medium");
+  const [temperature, setTemperature] = React.useState(0.5);
+  const [startDate, setStartDate] = React.useState("");
+  const [endDate, setEndDate] = React.useState("");
+  const navigate = useNavigate();
+
+  const showPopupMessage = (type: string, message: string) => {
+    setPopupMessage({ type, message });
+    setTimeout(() => {
+      setPopupMessage(null);
+    }, 3000);
+  };
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(event.target.value);
+  };
+
+  const handleSendMessage = async () => {
+    const newMessage = { content: inputValue, sender: "user" };
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
+    setInputValue(""); // Clear input field
+
+    const conversation_id = conversationId || ""; // Use conversationId if available, otherwise empty string
+
+    try {
+      const response = await generateResponse(conversation_id, inputValue);
+
+      if (response && response.error) {
+        const errorMessage = {
+          content: `Error: ${response.error}`,
+          sender: "system",
+        };
+        setMessages((prevMessages) => [...prevMessages, errorMessage]);
+      } else if (response) {
+        const botMessage = { content: response, sender: "bot" };
+        setMessages((prevMessages) => [...prevMessages, botMessage]);
+      } else {
+        const errorMessage = {
+          content: "Unexpected error. Please reload the website. ",
+          sender: "system",
+        };
+        setMessages((prevMessages) => [...prevMessages, errorMessage]);
+        showPopupMessage("error", `Error: ${errorMessage}`);
+      }
+    } catch (error) {
+      const errorMessage = {
+        content: `Error: ${error.message}`,
+        sender: "system",
+      };
+      setMessages((prevMessages) => [...prevMessages, errorMessage]);
+      showPopupMessage("error", `Error: ${error.message}`);
+    }
+  };
+
+  const toggleHistoryPopup = async () => {
+    if (!isPopupVisible) {
+      try {
+        const fetchedConversations = await fetchConversations();
+        console.log(fetchedConversations);
+        const sortedConversations = fetchedConversations.sort(
+          (a: { createdAt: string }, b: { createdAt: string }) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        console.log(sortedConversations);
+        setConversations(sortedConversations);
+        setIsPopupVisible(true); // Only set to true if fetch is successful
+      } catch (error) {
+        console.error("Failed to fetch conversations:", error);
+        showPopupMessage("error", `Error: ${error.message}`);
+      }
+    } else {
+      setIsPopupVisible(false);
+    }
+  };
+
+  const toggleSettingsPopup = () => {
+    setIsSettingsPopupVisible(!isSettingsPopupVisible);
+  };
+
+  const handleSaveSettings = () => {
+    localStorage.setItem("response_length", responseLength);
+    localStorage.setItem("temperature", temperature.toString());
+    localStorage.setItem("startdate", startDate);
+    localStorage.setItem("enddate", endDate);
+    getTransactionCount(startDate, endDate);
+    toggleSettingsPopup();
+  };
+
+  const handleResetSettings = () => {
+    setResponseLength("short");
+    setTemperature(0.5);
+    setStartDate("");
+    setEndDate("");
+  };
+
+  const handleResetClick = () => {
+    // Clear conversation_messages from local storage
+    localStorage.removeItem("conversation_messages");
+    setMessages([]); // Clear messages state
+    navigate("/chatbot");
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = date.toLocaleString("en-GB", { month: "long" });
+    const year = date.getFullYear();
+    const hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    const period = hours >= 12 ? "PM" : "AM";
+    const formattedHours = hours % 12 || 12;
+
+    const daySuffix = (day: number) => {
+      if (day > 3 && day < 21) return "th";
+      switch (day % 10) {
+        case 1:
+          return "st";
+        case 2:
+          return "nd";
+        case 3:
+          return "rd";
+        default:
+          return "th";
+      }
+    };
+
+    return `${day}${daySuffix(
+      day
+    )} ${month} ${year}, ${formattedHours}:${minutes} ${period}`;
+  };
+
+  React.useEffect(() => {
+    if (conversationId) {
+      fetchConversations(conversationId, setMessages, setTitle)
+        .then(() =>
+          showPopupMessage("success", "Conversations loaded.")
+        )
+        .catch((error) => showPopupMessage("error", `Error: ${error.message}`));
+    }
+  }, [conversationId]);
+
+  React.useEffect(() => {
+    if (conversationId) {
+      fetchConversations(conversationId, setMessages, setTitle);
+    }
+  }, [conversationId]);
+
   return (
-    <div className="min-h-screen flex flex-col justify-between">
-      <main className="flex-grow flex flex-col items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-xl font-semibold">Powered by RMIT Val</h1>
-          <p className="text-gray-500">Model: GPT-4o</p>
-          <p className="text-sm text-gray-400 mt-4">
-            Disclaimer: We utilize your data in our services to process and
-            provide advice. By using our services, you consent to this use of
-            your data.
-          </p>
-        </div>
-      </main>
-
-      {/* Example Questions */}
-      <section className="flex flex-col items-center px-8 pb-8 text-black">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2 w-full max-w-4xl">
-          <Button className="p-6 border border-gray-300 rounded-2xl bg-white text-left ">
-            <span className="block text-base font-semibold leading-tight">
-              Analyze my spending habits.
-              <br />
-              <span className="text-sm font-normal text-gray-500">
-                and help me minimize expenses for next week?
-              </span>
-            </span>
-          </Button>
-          <Button className="p-6 border border-gray-300 rounded-2xl bg-white text-left">
-            <span className="block text-base font-semibold leading-tight">
-              Can I set up a tax-free saving account?
-              <br />
-              <span className="text-sm font-normal text-gray-500">
-                in Australia as a non-citizen
-              </span>
-            </span>
-          </Button>
-          <Button className="p-6 border border-gray-300 rounded-2xl bg-white text-left">
-            <span className="block text-base font-semibold leading-tight">
-              What is down payment?
-              <br />
-              <span className="text-sm font-normal text-gray-500">etc...</span>
-            </span>
-          </Button>
-          <Button className="p-6 border border-gray-300 rounded-2xl bg-white text-left">
-            <span className="block text-base font-semibold leading-tight">
-              Analyze my spending habits.
-              <br />
-              <span className="text-sm font-normal text-gray-500">
-                and help me minimize expenses for next week?
-              </span>
-            </span>
-          </Button>
-        </div>
-        <div className="mt-8 w-full max-w-2xl">
-          <Input
-            placeholder="Ask me anything..."
-            className="rounded-full px-4 py-3 shadow-lg"
-          />
-        </div>
-
-        {/* Action Buttons */}
-        <div className="mt-4 flex space-x-4 justify-center">
-          <Button className="p-4 border border-gray-300 rounded-full bg-white shadow-md">
-            <Send className="h-5 w-5 text-gray-500" />
-          </Button>
-          <Button className="p-4 border border-gray-300 rounded-full bg-white shadow-md">
-            <RefreshCw className="h-5 w-5 text-gray-500" />
-          </Button>
-          <Button className="p-4 border border-gray-300 rounded-full bg-white shadow-md">
-            <Settings className="h-5 w-5 text-gray-500" />
-          </Button>
-        </div>
-
-        <p className="text-xs text-gray-400 mt-4 text-center">
-          Generated by generative AI. Responses may be irrelevant or misleading.
-        </p>
-      </section>
-    </div>
+    <ChatbotTemplate
+      inputValue={inputValue}
+      setInputValue={setInputValue}
+      isPopupVisible={isPopupVisible}
+      setIsPopupVisible={setIsPopupVisible}
+      conversations={conversations}
+      setConversations={setConversations}
+      messages={messages}
+      setMessages={setMessages}
+      title={title}
+      setTitle={setTitle}
+      conversationId={conversationId}
+      handleInputChange={handleInputChange}
+      handleSendMessage={handleSendMessage}
+      handleResetClick={handleResetClick}
+      toggleHistoryPopup={toggleHistoryPopup}
+      toggleSettingsPopup={toggleSettingsPopup}
+      handleSaveSettings={handleSaveSettings}
+      handleResetSettings={handleResetSettings}
+      formatDate={formatDate}
+      popupMessage={popupMessage}
+      isSettingsPopupVisible={isSettingsPopupVisible}
+      responseLength={responseLength}
+      setResponseLength={setResponseLength}
+      temperature={temperature}
+      setTemperature={setTemperature}
+      startDate={startDate}
+      setStartDate={setStartDate}
+      endDate={endDate}
+      setEndDate={setEndDate}
+    />
   );
 }
