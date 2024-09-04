@@ -8,6 +8,7 @@ import {
 import ChatbotTemplate from "@/components/ui/forChatbot/chatbotTemplate";
 
 export default function Chatbot() {
+
   const { conversationId } = useParams<{ conversationId?: string }>();
   const [inputValue, setInputValue] = React.useState("");
   const [isPopupVisible, setIsPopupVisible] = React.useState(false);
@@ -18,6 +19,7 @@ export default function Chatbot() {
     type: string;
     message: string;
   } | null>(null);
+  const [isFadingOut, setIsFadingOut] = React.useState(false);
   const [isSettingsPopupVisible, setIsSettingsPopupVisible] =
     React.useState(false);
   const [responseLength, setResponseLength] = React.useState("medium");
@@ -29,7 +31,11 @@ export default function Chatbot() {
   const showPopupMessage = (type: string, message: string) => {
     setPopupMessage({ type, message });
     setTimeout(() => {
-      setPopupMessage(null);
+      setIsFadingOut(true); // Start fade-out effect
+      setTimeout(() => {
+        setPopupMessage(null);
+        setIsFadingOut(false); // Reset fade-out state
+      }, 500); // Match the duration of the fade-out animation
     }, 3000);
   };
 
@@ -49,7 +55,7 @@ export default function Chatbot() {
 
       if (response && response.error) {
         const errorMessage = {
-          content: `Error: ${response.error}`,
+          content: `**Error:** ${response.error}`,
           sender: "system",
         };
         setMessages((prevMessages) => [...prevMessages, errorMessage]);
@@ -58,7 +64,7 @@ export default function Chatbot() {
         setMessages((prevMessages) => [...prevMessages, botMessage]);
       } else {
         const errorMessage = {
-          content: "Unexpected error. Please reload the website. ",
+          content: "**Unexpected error. Please reload the website.**",
           sender: "system",
         };
         setMessages((prevMessages) => [...prevMessages, errorMessage]);
@@ -66,9 +72,10 @@ export default function Chatbot() {
       }
     } catch (error) {
       const errorMessage = {
-        content: `Error: ${error.message}`,
+        content: `**Error:** ${error.message}`,
         sender: "system",
       };
+      // Set Assistant Messages
       setMessages((prevMessages) => [...prevMessages, errorMessage]);
       showPopupMessage("error", `Error: ${error.message}`);
     }
@@ -154,9 +161,7 @@ export default function Chatbot() {
   React.useEffect(() => {
     if (conversationId) {
       fetchConversations(conversationId, setMessages, setTitle)
-        .then(() =>
-          showPopupMessage("success", "Conversations loaded.")
-        )
+        .then(() => showPopupMessage("success", "Conversations loaded."))
         .catch((error) => showPopupMessage("error", `Error: ${error.message}`));
     }
   }, [conversationId]);
@@ -189,6 +194,7 @@ export default function Chatbot() {
       handleResetSettings={handleResetSettings}
       formatDate={formatDate}
       popupMessage={popupMessage}
+      isFadingOut={isFadingOut}
       isSettingsPopupVisible={isSettingsPopupVisible}
       responseLength={responseLength}
       setResponseLength={setResponseLength}

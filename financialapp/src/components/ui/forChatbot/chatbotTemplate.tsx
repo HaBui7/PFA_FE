@@ -1,4 +1,5 @@
 import * as React from "react";
+import { marked } from "marked";
 import { Send, RefreshCw, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,6 +35,7 @@ interface ChatbotTemplateProps {
   setStartDate: React.Dispatch<React.SetStateAction<string>>;
   endDate: string;
   setEndDate: React.Dispatch<React.SetStateAction<string>>;
+  isFadingOut: boolean;
 }
 
 const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
@@ -65,8 +67,17 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
   setStartDate,
   endDate,
   setEndDate,
+  isFadingOut,
 }) => {
   const navigate = useNavigate();
+  const wrapDollarTextInGreen = (html) => {
+    return html.replace(
+      /(\$[0-9,]+(?:\.[0-9]{1,2})?|\b[0-9,]+(?:\.[0-9]{1,2})?\$)/g,
+      (match) => {
+        return `<span class="green-text">${match}</span>`;
+      }
+    );
+  };
 
   return (
     <div className="min-h-screen flex flex-col justify-between">
@@ -74,8 +85,10 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
         <div
           className={`fixed left-1/2 transform -translate-x-1/2 mt-4 p-4 rounded ${
             popupMessage.type === "success" ? "bg-green-500" : "bg-red-500"
-          } text-white fade-in`}
-          style={{ top: "4rem" }} // Adjust this value as needed
+          } text-white ${isFadingOut ? "fade-out" : "fade-in"} ${
+            !isFadingOut && !popupMessage ? "initial" : ""
+          }`}
+          style={{ top: "4rem" }}
         >
           {popupMessage.message}
         </div>
@@ -101,7 +114,11 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
                   key={index}
                   className="p-4 mb-4 bg-white border border-gray-300 rounded-lg"
                 >
-                  <p>{message.content}</p>
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: wrapDollarTextInGreen(marked(message.content)),
+                    }}
+                  ></div>
                 </div>
               ))}
           </div>
