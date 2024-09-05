@@ -249,6 +249,7 @@ const TransactionList = () => {
       console.error("Error adding transaction:", err);
     }
   };
+
   const openEditModal = (transaction: Transaction) => {
     console.log(newTransaction);
     setTransactionToEdit(transaction);

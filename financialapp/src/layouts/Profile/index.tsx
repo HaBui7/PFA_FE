@@ -57,7 +57,7 @@ const ProfilePage = () => {
 
   const handleSave = async () => {
     try {
-      await axios.put("http://localhost:3000/api/users/profile", formData, {
+      await axios.put("http://localhost:3000/api/profile", formData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("auth")}`,
         },
