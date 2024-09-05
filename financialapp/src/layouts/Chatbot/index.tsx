@@ -8,7 +8,6 @@ import {
 import ChatbotTemplate from "@/components/ui/forChatbot/chatbotTemplate";
 
 export default function Chatbot() {
-
   const { conversationId } = useParams<{ conversationId?: string }>();
   const [inputValue, setInputValue] = React.useState("");
   const [isPopupVisible, setIsPopupVisible] = React.useState(false);
@@ -27,6 +26,7 @@ export default function Chatbot() {
   const [startDate, setStartDate] = React.useState("");
   const [endDate, setEndDate] = React.useState("");
   const navigate = useNavigate();
+  const [isProcessing, setIsProcessing] = React.useState(false);
 
   const showPopupMessage = (type: string, message: string) => {
     setPopupMessage({ type, message });
@@ -43,8 +43,62 @@ export default function Chatbot() {
     setInputValue(event.target.value);
   };
 
+  const streamMessage = (message, setMessages) => {
+    let index = 0;
+
+    // Generator function to yield chunks of the message
+    function* messageChunks() {
+      while (index < message.length) {
+        yield message.slice(index, index + 2); // Yield two characters
+        index += 2; // Increment index by 2
+      }
+    }
+
+    const chunks = messageChunks();
+
+    // Function to process each chunk
+    const processChunk = () => {
+      const { value, done } = chunks.next();
+      if (!done) {
+        setMessages((prevMessages) => {
+          const lastMessage = prevMessages[prevMessages.length - 1];
+          const updatedMessage = {
+            ...lastMessage,
+            content: lastMessage.content + value, // Append the chunk
+          };
+          return [...prevMessages.slice(0, -1), updatedMessage];
+        });
+        setTimeout(processChunk, 50); // Schedule the next update with a delay
+      }
+    };
+
+    // Initialize the message with the first chunk
+    setMessages((prevMessages) => {
+      const lastMessage = prevMessages[prevMessages.length - 1];
+      const updatedMessage = {
+        ...lastMessage,
+        content: lastMessage.content + message.slice(index, index + 2), // Append two characters
+      };
+      index += 2; // Increment index by 2
+      return [...prevMessages.slice(0, -1), updatedMessage];
+    });
+
+    // Start processing the chunks
+    setTimeout(processChunk, 50); // Start the first update with a delay
+  };
+
   const handleSendMessage = async () => {
-    const newMessage = { content: inputValue, sender: "user" };
+    if (isProcessing) {
+      showPopupMessage(
+        "error",
+        "Please wait until the current message is processed."
+      );
+      return;
+    }
+
+    setIsProcessing(true); // Set processing to true
+
+    const newMessage = { content: inputValue, role: "user" };
     setMessages((prevMessages) => [...prevMessages, newMessage]);
     setInputValue(""); // Clear input field
 
@@ -56,16 +110,17 @@ export default function Chatbot() {
       if (response && response.error) {
         const errorMessage = {
           content: `**Error:** ${response.error}`,
-          sender: "system",
+          role: "system",
         };
         setMessages((prevMessages) => [...prevMessages, errorMessage]);
       } else if (response) {
-        const botMessage = { content: response, sender: "bot" };
+        const botMessage = { content: "", role: "assistant" };
         setMessages((prevMessages) => [...prevMessages, botMessage]);
+        streamMessage(response, setMessages); // Stream the response
       } else {
         const errorMessage = {
           content: "**Unexpected error. Please reload the website.**",
-          sender: "system",
+          role: "system",
         };
         setMessages((prevMessages) => [...prevMessages, errorMessage]);
         showPopupMessage("error", `Error: ${errorMessage}`);
@@ -73,14 +128,17 @@ export default function Chatbot() {
     } catch (error) {
       const errorMessage = {
         content: `**Error:** ${error.message}`,
-        sender: "system",
+        role: "system",
       };
+      // Save to local storage
+      localStorage.setItem("conversation_messages", JSON.stringify(messages));
       // Set Assistant Messages
       setMessages((prevMessages) => [...prevMessages, errorMessage]);
       showPopupMessage("error", `Error: ${error.message}`);
+    } finally {
+      setIsProcessing(false); // Set processing to false when done
     }
   };
-
   const toggleHistoryPopup = async () => {
     if (!isPopupVisible) {
       try {
@@ -165,12 +223,9 @@ export default function Chatbot() {
         .catch((error) => showPopupMessage("error", `Error: ${error.message}`));
     }
   }, [conversationId]);
-
   React.useEffect(() => {
-    if (conversationId) {
-      fetchConversations(conversationId, setMessages, setTitle);
-    }
-  }, [conversationId]);
+    localStorage.setItem("conversation_messages", JSON.stringify(messages));
+  }, [messages]);
 
   return (
     <ChatbotTemplate

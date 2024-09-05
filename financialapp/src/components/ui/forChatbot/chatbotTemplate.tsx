@@ -4,6 +4,7 @@ import { Send, RefreshCw, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ChatbotTemplateProps {
   inputValue: string;
@@ -36,6 +37,7 @@ interface ChatbotTemplateProps {
   endDate: string;
   setEndDate: React.Dispatch<React.SetStateAction<string>>;
   isFadingOut: boolean;
+  isProcessing: boolean;
 }
 
 const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
@@ -68,6 +70,7 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
   endDate,
   setEndDate,
   isFadingOut,
+  isProcessing,
 }) => {
   const navigate = useNavigate();
   const wrapDollarTextInGreen = (html) => {
@@ -129,40 +132,16 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
       <section className="flex flex-col items-center px-8 pb-8 text-black">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2 w-full max-w-4xl">
           <Button className="p-6 border border-gray-300 rounded-2xl bg-white text-left">
-            <span className="block text-base font-semibold leading-tight">
-              Prompt
-              <br />
-              <span className="text-sm font-normal text-gray-500">
-                Placeholder.
-              </span>
-            </span>
+            <Skeleton className="block text-base font-semibold leading-tight" />
           </Button>
           <Button className="p-6 border border-gray-300 rounded-2xl bg-white text-left">
-            <span className="block text-base font-semibold leading-tight">
-              Prompt
-              <br />
-              <span className="text-sm font-normal text-gray-500">
-                Placeholder.
-              </span>
-            </span>
+            <Skeleton className="block text-base font-semibold leading-tight" />
           </Button>
           <Button className="p-6 border border-gray-300 rounded-2xl bg-white text-left">
-            <span className="block text-base font-semibold leading-tight">
-              Prompt
-              <br />
-              <span className="text-sm font-normal text-gray-500">
-                Placeholder.
-              </span>
-            </span>
+            <Skeleton className="block text-base font-semibold leading-tight" />
           </Button>
           <Button className="p-6 border border-gray-300 rounded-2xl bg-white text-left">
-            <span className="block text-base font-semibold leading-tight">
-              Prompt
-              <br />
-              <span className="text-sm font-normal text-gray-500">
-                Placeholder.
-              </span>
-            </span>
+            <Skeleton className="block text-base font-semibold leading-tight" />
           </Button>
         </div>
         <div className="mt-8 w-full max-w-2xl">
@@ -182,8 +161,11 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
         <div className="mt-4 flex space-x-4 justify-center">
           <Button
             id="send"
-            className="p-4 border border-gray-300 rounded-full bg-white shadow-md"
+            className={`p-4 border border-gray-300 rounded-full bg-white shadow-md ${
+              isProcessing ? "cursor-not-allowed" : "cursor-pointer"
+            }`}
             onClick={handleSendMessage}
+            disabled={isProcessing} // Disable button when processing
           >
             <Send className="h-5 w-5 text-gray-500" />
           </Button>
