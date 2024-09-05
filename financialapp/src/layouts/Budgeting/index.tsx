@@ -1,5 +1,6 @@
-import * as React from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Settings } from "lucide-react";
+import axios from "axios";
 
 import {
   Card,
@@ -19,6 +20,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { BudgetPieChart } from "@/components/ui/forBudget/budgetPieChart";
 import ErrorMessage from "@/components/ui/errorMessage";
+import { title } from "process";
+
+interface Budget {
+  title: string;
+  startDate: string;
+  deadline: string;
+  categories: Object;
+}
 
 const initialBudgetData = [
   {
@@ -60,21 +69,47 @@ const initialBudgetData = [
 ];
 
 export default function Budget() {
-  const [duration, setDuration] = React.useState({ start: "", end: "" });
-  const [budgetData, setBudgetData] = React.useState(initialBudgetData);
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [isBudgetSet, setIsBudgetSet] = React.useState(false);
-  const [selectedCategory, setSelectedCategory] = React.useState<number | null>(
-    null
-  );
+  const [duration, setDuration] = useState({ start: "", end: "" });
+  const [budgetData, setBudgetData] = useState(initialBudgetData);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isBudgetSet, setIsBudgetSet] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
 
-  const [error, setError] = React.useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [budget, setBudget] = useState({
+    title: "",
+    startDate: "",
+    deadline: "",
+    categories: {
+      household: {
+        limit: 0,
+      },
+      food: {
+        limit: 0,
+      },
+      ultilities: {
+        limit: 0,
+      },
+      transportation: {
+        limit: 0,
+      },
+      saving: {
+        limit: 0,
+      },
+      others: {
+        limit: 0,
+      },
+      shopping: {
+        limit: 0,
+      },
+    },
+  });
 
-  const totalSpent = React.useMemo(() => {
+  const totalSpent = useMemo(() => {
     return budgetData.reduce((acc, curr) => acc + curr.spent, 0);
   }, [budgetData]);
 
-  const totalBudget = React.useMemo(() => {
+  const totalBudget = useMemo(() => {
     return budgetData.reduce((acc, curr) => acc + curr.budget, 0);
   }, [budgetData]);
 
@@ -83,7 +118,7 @@ export default function Budget() {
     setIsModalOpen(true);
   };
 
-  const handleSaveSettings = () => {
+  const handleSaveSettings = async () => {
     setError(null);
 
     const today = new Date();
@@ -95,7 +130,6 @@ export default function Budget() {
     const endDate = new Date(duration.end);
     endDate.setHours(0, 0, 0, 0); // Normalize 'endDate' to midnight
 
-    console.log(startDate);
     if (duration.start == "" || duration.end == "") {
       setError("Start date or End date is not set correctly");
       return;
@@ -119,8 +153,19 @@ export default function Budget() {
       }
     }
 
-    setIsBudgetSet(true);
-    setIsModalOpen(false);
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/budgets/",
+        budget,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("auth")}`,
+          },
+        }
+      );
+    } catch (err) {}
+    // // setIsBudgetSet(true);
+    // setIsModalOpen(false);
   };
 
   const handleOpenSettings = () => {
