@@ -24,6 +24,7 @@ const Login = () => {
       if (response.data.token) {
         localStorage.setItem("auth", response.data.token); // Store JWT token
         localStorage.setItem("username", response.data.data.user.name);
+
         setMessage("Login successful!"); // Set success message
         navigate("/"); // Navigate to home page
       }
