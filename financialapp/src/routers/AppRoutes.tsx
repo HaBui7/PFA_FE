@@ -83,6 +83,14 @@ const AppRoutes = () => {
             }
           />
           <Route
+            path="/chatbot/:conversationId"
+            element={
+              <ProtectedRoute>
+                <Chatbot />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/goals"
             element={
               <ProtectedRoute>
