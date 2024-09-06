@@ -16,14 +16,15 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-const chartData = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
-];
+import { useEffect, useState } from "react";
+import axios from "axios";
+
+interface Transaction {
+  month: string;
+  income: number;
+  expense: number;
+}
+
 const chartConfig = {
   desktop: {
     label: "Desktop",
@@ -35,7 +36,68 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-const Dashboard = () => {
+const dashlineChart = () => {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [chartData, setChartData] = useState([
+    { month: "January", income: 0, expense: 0 },
+    { month: "February", income: 0, expense: 0 },
+    { month: "March", income: 0, expense: 0 },
+    { month: "April", income: 0, expense: 0 },
+    { month: "May", income: 0, expense: 0 },
+    { month: "June", income: 0, expense: 0 },
+    { month: "July", income: 0, expense: 0 },
+    { month: "August", income: 0, expense: 0 },
+    { month: "September", income: 0, expense: 0 },
+    { month: "October", income: 0, expense: 0 },
+    { month: "November", income: 0, expense: 0 },
+    { month: "December", income: 0, expense: 0 },
+  ]);
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:3000/api/transactions/getChartData?year=2024",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("auth")}`,
+            },
+          }
+        );
+
+        const transactions: Transaction[] = response.data.data;
+        console.log("Fetched transactions:", transactions);
+
+        const updatedChartData = chartData.map((monthData) => {
+          const transactionData = transactions.find(
+            (transaction) => transaction.month === monthData.month
+          );
+
+          return transactionData
+            ? {
+                ...monthData,
+                income: transactionData.income,
+                expense: transactionData.expense,
+              }
+            : monthData;
+        });
+
+        console.log("Updated chart data:", updatedChartData);
+        setChartData(updatedChartData);
+      } catch (err) {
+        if (err instanceof Error) setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTransactions();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
   return (
     <Card>
       <CardHeader>
@@ -45,48 +107,45 @@ const Dashboard = () => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig}>
-          <AreaChart
-            accessibilityLayer
-            data={chartData}
-            margin={{
-              left: -20,
-              right: 12,
-            }}
-          >
-            <CartesianGrid vertical={false} />
-            <XAxis
-              dataKey="month"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              tickFormatter={(value) => value.slice(0, 3)}
-            />
-            <YAxis
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              tickCount={3}
-            />
-            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-            <Area
-              dataKey="mobile"
-              type="natural"
-              fill="var(--color-mobile)"
-              fillOpacity={0.4}
-              stroke="var(--color-mobile)"
-              stackId="a"
-            />
-            <Area
-              dataKey="desktop"
-              type="natural"
-              fill="var(--color-desktop)"
-              fillOpacity={0.4}
-              stroke="var(--color-desktop)"
-              stackId="a"
-            />
-          </AreaChart>
-        </ChartContainer>
+        <AreaChart
+          data={chartData}
+          margin={{
+            left: -20,
+            right: 12,
+          }}
+        >
+          <CartesianGrid vertical={false} />
+          <XAxis
+            dataKey="month"
+            tickLine={false}
+            axisLine={false}
+            tickMargin={8}
+            tickFormatter={(value) => value.slice(0, 3)}
+          />
+          <YAxis
+            tickLine={false}
+            axisLine={false}
+            tickMargin={8}
+            tickCount={3}
+          />
+          <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+          <Area
+            dataKey="income"
+            type="natural"
+            fill="var(--color-mobile)"
+            fillOpacity={0.4}
+            stroke="var(--color-mobile)"
+            stackId="a"
+          />
+          <Area
+            dataKey="expense"
+            type="natural"
+            fill="var(--color-desktop)"
+            fillOpacity={0.4}
+            stroke="var(--color-desktop)"
+            stackId="a"
+          />
+        </AreaChart>
       </CardContent>
       <CardFooter>
         <div className="flex w-full items-start gap-2 text-sm">
@@ -104,4 +163,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default dashlineChart;
