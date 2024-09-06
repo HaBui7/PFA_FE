@@ -39,7 +39,7 @@ const GoalTransactionList = () => {
           (transaction: Transaction) => transaction.isSavingsTransfer
         );
 
-        setTransactions(savingTransactions.reverse());
+        setTransactions(savingTransactions);
         setLoading(false);
       } catch (err) {
         if (err instanceof Error) setError(err.message);
