@@ -28,13 +28,13 @@ interface Transaction {
 }
 
 const categoryColors: { [key: string]: string } = {
-  Household: "#FF6384",
-  Shopping: "#36A2EB",
-  Food: "#FFCE56",
-  Utilities: "#4BC0C0",
-  Transportation: "#9966FF",
-  Others: "#dbc8db",
-  Saving: "#a1ede9",
+  household: "#FF6384",
+  shopping: "#36A2EB",
+  food: "#FFCE56",
+  utilities: "#4BC0C0",
+  transportation: "#9966FF",
+  others: "#dbc8db",
+  saving: "#a1ede9",
 };
 
 const chartConfig = {
