@@ -74,6 +74,9 @@ const DashlineChart = () => {
     fetchData();
   }, []);
 
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
   // Show loading state or error message if applicable
   if (loading) return <div>Loading...</div>; // Show loading while fetching
   if (error) return <div>Error: {error}</div>; // Show error if there's any
@@ -87,51 +90,45 @@ const DashlineChart = () => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {chartData.length > 0 ? ( // Conditionally render the chart only when data is available
-          <ChartContainer config={chartConfig}>
-            <AreaChart
-              data={chartData}
-              margin={{
-                left: -20,
-                right: 12,
-              }}
-            >
-              <CartesianGrid vertical={false} />
-              <XAxis
-                dataKey="month"
-                tickLine={false}
-                axisLine={false}
-                tickMargin={8}
-                tickFormatter={(value) => value.slice(0, 3)} // Abbreviate month names
-              />
-              <YAxis
-                tickLine={false}
-                axisLine={false}
-                tickMargin={8}
-                tickCount={3}
-              />
-              <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-              <Area
-                dataKey="income"
-                type="natural"
-                fill="var(--color-income)"
-                fillOpacity={0.4}
-                stroke="var(--color-income)"
-                stackId="a"
-              />
-              <Area
-                dataKey="expense"
-                type="natural"
-                fill="var(--color-expense)"
-                fillOpacity={0.4}
-                stroke="var(--color-expense)"
-                stackId="a"
-              />
-            </AreaChart>
-          </ChartContainer>
-        ) : (
-          <div>No data available</div> // Handle the case where no data is available
-        )}
+        <AreaChart
+          data={chartData}
+          margin={{
+            left: -20,
+            right: 12,
+          }}
+        >
+          <CartesianGrid vertical={false} />
+          <XAxis
+            dataKey="month"
+            tickLine={false}
+            axisLine={false}
+            tickMargin={8}
+            tickFormatter={(value) => value.slice(0, 3)}
+          />
+          <YAxis
+            tickLine={false}
+            axisLine={false}
+            tickMargin={8}
+            tickCount={3}
+          />
+          <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+          <Area
+            dataKey="income"
+            type="natural"
+            fill="var(--color-mobile)"
+            fillOpacity={0.4}
+            stroke="var(--color-mobile)"
+            stackId="a"
+          />
+          <Area
+            dataKey="expense"
+            type="natural"
+            fill="var(--color-desktop)"
+            fillOpacity={0.4}
+            stroke="var(--color-desktop)"
+            stackId="a"
+          />
+        </AreaChart>
       </CardContent>
       <CardFooter>
         <div className="flex w-full items-start gap-2 text-sm">
