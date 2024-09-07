@@ -1,25 +1,34 @@
-import TransactionLineChart from "@/components/ui/forDashboard/transactionLineChart";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CircleDollarSign, HandCoins, Wallet } from "lucide-react";
-import StatCard from "@/components/ui/forDashboard/statCard";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { HandCoins, Wallet, ChevronsRight } from "lucide-react";
+import StatCard from "@/components/ui/forDashboard/statCard";
+import TransactionLineChart from "@/components/ui/forDashboard/transactionLineChart";
 
 type Transaction = {
   id: number;
   type: "income" | "expense";
   transactionAmount: number;
 };
-
+interface SavingPlan {
+  goalName: string;
+  currentAmount: number;
+  targetAmount: number;
+  targetDate: string;
+}
 const Dashboard = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [savingPlan, setSavingPlan] = useState<SavingPlan>(); // Saving plan state
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchTransactions = async () => {
+    const fetchTransactionsAndSaving = async () => {
       try {
-        const response = await axios.get(
+        // Fetch transactions
+        const transactionResponse = await axios.get(
           "http://localhost:3000/api/transactions/",
           {
             headers: {
@@ -27,7 +36,18 @@ const Dashboard = () => {
             },
           }
         );
-        setTransactions(response.data.data.transactions);
+        setTransactions(transactionResponse.data.data.transactions);
+
+        // Fetch saving plan
+        const savingResponse = await axios.get(
+          "http://localhost:3000/api/saving",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("auth")}`,
+            },
+          }
+        );
+        setSavingPlan(savingResponse.data.data); // Set saving plan data
       } catch (err) {
         if (err instanceof Error) setError(err.message);
       } finally {
@@ -35,7 +55,7 @@ const Dashboard = () => {
       }
     };
 
-    fetchTransactions();
+    fetchTransactionsAndSaving();
   }, []);
 
   const totalIncome = transactions
@@ -50,18 +70,14 @@ const Dashboard = () => {
     {
       backgroundColor: "bg-red-100",
       icon: HandCoins,
-      percentage: "-10.2%",
       title: "Total Expense",
       amount: `$${totalExpense}`,
-      percentageColor: "text-red-500",
     },
     {
       backgroundColor: "bg-green-100",
       icon: Wallet,
-      percentage: "+16.4%",
       title: "Total Income",
       amount: `$${totalIncome}`,
-      percentageColor: "text-green-500",
     },
   ];
 
@@ -69,28 +85,47 @@ const Dashboard = () => {
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <div className="min-h-screen p-6  w-[80%] mx-auto">
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-3 ">
-        {/* Left Side: Three Cards Vertically */}
-        <div className="flex flex-col  h-full gap-3 ">
+    <div className="min-h-screen p-6 w-[80%] mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-3">
+        {/* Left Side: Stat Cards */}
+        <div className="flex flex-col h-full gap-3">
           {statCards.map((card, index) => (
             <StatCard
               key={index}
               backgroundColor={card.backgroundColor}
               icon={card.icon}
-              percentage={card.percentage}
               title={card.title}
               amount={card.amount}
-              percentageColor={card.percentageColor}
             />
           ))}
-          <Card className="flex-1">
+
+          {/* Mini Saving Plan Card */}
+          <Card
+            className="flex-1 cursor-pointer"
+            onClick={() => navigate("/goals")} // Navigate to goals on click
+          >
             <CardHeader>
-              <CardTitle>Saving Plan</CardTitle>
+              <CardTitle className="flex flex-row justify-between">
+                <div> Saving Plan</div>
+                <ChevronsRight size={30} />
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              {/* Add your savings plan component here */}
-              <p>Sample savings plan content...</p>
+              {savingPlan ? (
+                <div>
+                  <p className="font-bold text-lg">
+                    Goal Name: {savingPlan.goalName.toUpperCase()}
+                  </p>
+                  <p>
+                    ${savingPlan.currentAmount} / ${savingPlan.targetAmount}
+                  </p>
+                  <p>
+                    Due: {new Date(savingPlan.targetDate).toLocaleDateString()}
+                  </p>
+                </div>
+              ) : (
+                <p>You have not set up any saving plan.</p>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -99,31 +134,6 @@ const Dashboard = () => {
         <div className="col-span-3 flex-1">
           <TransactionLineChart />
         </div>
-      </div>
-
-      {/* Other Cards Below */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-3">
-        {/* Transaction History */}
-        <Card className="col-span-1 md:col-span-2 lg:col-span-1">
-          <CardHeader>
-            <CardTitle className="">Transition History</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {/* Add your transaction history component here */}
-            <p>Sample transaction history content...</p>
-          </CardContent>
-        </Card>
-
-        {/* My Cards */}
-        <Card className="col-span-1 md:col-span-2 lg:col-span-1">
-          <CardHeader>
-            <CardTitle>My Cards</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {/* Add your cards component here */}
-            <p>Sample cards content...</p>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );

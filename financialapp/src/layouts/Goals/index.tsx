@@ -24,6 +24,7 @@ export default function SavingGoalPage() {
     isAutoSavingEnabled: false,
     autoSavingPercentage: 0,
   });
+  const [goalState, setGoalState] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [noSavingGoal, setNoSavingGoal] = useState(false);
@@ -58,7 +59,17 @@ export default function SavingGoalPage() {
             Authorization: `Bearer ${localStorage.getItem("auth")}`,
           },
         });
+
         setSavingData(response.data.data);
+        const progressPercentage = Math.min(
+          (response.data.data.currentAmount / response.data.data.targetAmount) *
+            100,
+          100
+        );
+        if (progressPercentage >= 100) {
+          setGoalState(true);
+        }
+
         setLoading(false);
       } catch (err) {
         if (axios.isAxiosError(err) && err.response?.status === 404) {
@@ -66,6 +77,7 @@ export default function SavingGoalPage() {
         } else if (err instanceof Error) {
           setError(err.message);
         }
+
         setLoading(false);
       }
     };
@@ -298,12 +310,19 @@ export default function SavingGoalPage() {
         ) : (
           <>
             <div className="text-center mb-8 ">
-              <h1 className="text-3xl font-bold mb-4">Saving Goal</h1>
+              <h1 className="text-3xl font-bold mb-4">
+                Saving Goal: {goalName.toUpperCase()}
+              </h1>
+
               <div className="flex justify-center space-x-4">
                 <Button variant="outline" onClick={handleEditClick}>
                   Edit
                 </Button>
-                <Button variant="outline" onClick={handleAddMoneyClick}>
+                <Button
+                  variant="outline"
+                  onClick={handleAddMoneyClick}
+                  disabled={goalState}
+                >
                   Add Money
                 </Button>
                 <Button variant="outline" onClick={handleWithdrawClick}>
@@ -323,7 +342,11 @@ export default function SavingGoalPage() {
             <div className="text-center mb-8 flex md:flex-row justify-center items-start md:items-center space-y-8 md:space-y-0 md:space-x-8 ">
               <div className="w-full ">
                 <p className="text-gray-600">You have reached</p>
-                <p className="text-6xl font-bold mb-2">
+                <p
+                  className={`text-6xl font-bold mb-2 ${
+                    progressPercentage >= 100 ? "text-yellow-500" : "text-black"
+                  }`}
+                >
                   ${currentAmount.toFixed(2)}
                 </p>
                 <p className="text-gray-600">
@@ -336,9 +359,6 @@ export default function SavingGoalPage() {
                 </p>
                 <Separator className="my-4" />
                 <div className="mb-4">
-                  <p className="text-lg font-bold mb-2">
-                    {goalName.toUpperCase()}
-                  </p>
                   <Progress
                     value={progressPercentage}
                     className={`w-1/2 mx-auto ${
@@ -347,7 +367,7 @@ export default function SavingGoalPage() {
                         : "[&>*]:bg-green-500"
                     } bg-gray-200`}
                   />
-                  <p className="text-gray-600 mt-2">
+                  <p className="text-yellow-500 font-bold mt-2">
                     {progressPercentage === 100
                       ? "Congratulations! You have achieved your goal"
                       : `${progressPercentage.toFixed(0)}%`}
