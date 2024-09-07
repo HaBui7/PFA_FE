@@ -8,14 +8,16 @@ import {
 } from "@/components/ui/card";
 
 import { TrendingUp } from "lucide-react";
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
-
 import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
+  Area,
+  AreaChart,
+  CartesianGrid,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+
+import { ChartConfig, ChartTooltipContent } from "@/components/ui/chart";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -26,12 +28,12 @@ interface Transaction {
 }
 
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
+  income: {
+    label: "income",
     color: "hsl(var(--chart-1))",
   },
-  mobile: {
-    label: "Mobile",
+  expense: {
+    label: "expense",
     color: "hsl(var(--chart-2))",
   },
 } satisfies ChartConfig;
@@ -98,6 +100,9 @@ const dashlineChart = () => {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
   return (
     <Card>
       <CardHeader>
@@ -128,21 +133,21 @@ const dashlineChart = () => {
             tickMargin={8}
             tickCount={3}
           />
-          <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+          <Tooltip cursor={false} content={<ChartTooltipContent />} />
           <Area
             dataKey="income"
             type="natural"
-            fill="var(--color-mobile)"
+            fill={chartConfig.income.color}
             fillOpacity={0.4}
-            stroke="var(--color-mobile)"
+            stroke={chartConfig.income.color}
             stackId="a"
           />
           <Area
             dataKey="expense"
             type="natural"
-            fill="var(--color-desktop)"
+            fill={chartConfig.expense.color}
             fillOpacity={0.4}
-            stroke="var(--color-desktop)"
+            stroke={chartConfig.expense.color}
             stackId="a"
           />
         </AreaChart>
