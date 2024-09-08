@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Switch } from "../switch";
 import { Info } from "lucide-react";
 import {
