@@ -168,7 +168,7 @@ export function PieTransaction() {
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
         <div className="leading-none text-muted-foreground">
-          Showing the expense amout of each category
+          Showing the expense amount of each category
         </div>
       </CardFooter>
     </Card>

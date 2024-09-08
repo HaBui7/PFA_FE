@@ -126,7 +126,7 @@ const Navbar = () => {
         {isLoggedIn ? (
           <div className="relative">
             <div className="flex flex-row items-center">
-              <div className="xl:-ml-48 mr-6 border-2 border-green-500 p-2 bg-green-500 text-white font-semibold ">
+              <div className="xl:-ml-48 mr-6 border-2  p-2 bg-white text-black font-semibold  rounded-xl">
                 Current Balance: ${localStorage.getItem("balance")}
               </div>
               <button
