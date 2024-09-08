@@ -367,7 +367,13 @@ export default function SavingGoalPage() {
                         : "[&>*]:bg-green-500"
                     } bg-gray-200`}
                   />
-                  <p className="text-yellow-500 font-bold mt-2">
+                  <p
+                    className={` font-bold mt-2 ${
+                      progressPercentage >= 100
+                        ? "text-yellow-500"
+                        : "text-black"
+                    }`}
+                  >
                     {progressPercentage === 100
                       ? "Congratulations! You have achieved your goal"
                       : `${progressPercentage.toFixed(0)}%`}
