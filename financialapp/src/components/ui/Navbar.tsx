@@ -125,18 +125,23 @@ const Navbar = () => {
         {/* <div className="underline"> Current Balance: {balance}</div> */}
         {isLoggedIn ? (
           <div className="relative">
-            <button
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="flex items-center space-x-2 focus:outline-none"
-            >
-              <img
-                src={avatar}
-                alt="User Avatar"
-                className="h-8 w-8 rounded-full"
-              />
-              <span className="text-black font-medium">{username}</span>
-              <ChevronDown className="h-4 w-4" />
-            </button>
+            <div className="flex flex-row items-center">
+              <div className="xl:-ml-48 mr-6 border-2 border-green-500 p-2 bg-green-500 text-white font-semibold ">
+                Current Balance: ${localStorage.getItem("balance")}
+              </div>
+              <button
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className="flex items-center space-x-2 focus:outline-none"
+              >
+                <img
+                  src={avatar}
+                  alt="User Avatar"
+                  className="h-8 w-8 rounded-full"
+                />
+                <span className="text-black font-medium">{username}</span>
+                <ChevronDown className="h-4 w-4" />
+              </button>
+            </div>
 
             {/* Dropdown Menu */}
             {dropdownOpen && (
