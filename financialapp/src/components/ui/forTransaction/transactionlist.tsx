@@ -32,6 +32,7 @@ interface Transaction {
   transactionAmount: number;
   title: string;
   _id: string;
+  isSavingsTransfer: boolean;
 }
 
 const categoryIcons = {
@@ -84,6 +85,7 @@ const TransactionList = () => {
     transactionAmount: 0,
     type: "expense",
     date: "",
+    isSavingsTransfer: false,
   });
 
   const indexOfLastTransaction = (currentPage + 1) * itemsPerPage;
@@ -109,17 +111,8 @@ const TransactionList = () => {
         });
 
         // Modify the transactions array
-        const modifiedTransactions = response.data.data.transactions.map(
-          (transaction: Transaction) => {
-            if (!transaction.title) {
-              // Check if title is undefined, null, or an empty string
-              return {
-                ...transaction,
-                title: "Saving from income",
-              };
-            }
-            return transaction;
-          }
+        const modifiedTransactions = response.data.data.transactions.filter(
+          (transaction: Transaction) => !transaction.isSavingsTransfer
         );
 
         setTransactions(modifiedTransactions.reverse());
@@ -207,7 +200,10 @@ const TransactionList = () => {
     ) {
       errors.push("Invalid transaction amount.");
     }
-    if (balance < anotherTransactionAmount) {
+    if (
+      balance < anotherTransactionAmount &&
+      newTransaction.type == "expense"
+    ) {
       errors.push(
         "Your current balance is insufficient to complete this transaction."
       );

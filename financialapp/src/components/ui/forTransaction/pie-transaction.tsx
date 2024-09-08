@@ -1,5 +1,5 @@
 import * as React from "react";
-import { TrendingUp } from "lucide-react";
+
 import { Label, Pie, PieChart, Cell } from "recharts";
 import axios from "axios";
 
@@ -28,13 +28,13 @@ interface Transaction {
 }
 
 const categoryColors: { [key: string]: string } = {
-  Household: "#FF6384",
-  Shopping: "#36A2EB",
-  Food: "#FFCE56",
-  Utilities: "#4BC0C0",
-  Transportation: "#9966FF",
-  Others: "#dbc8db",
-  Saving: "#a1ede9",
+  household: "#FF6384",
+  shopping: "#36A2EB",
+  food: "#FFCE56",
+  utilities: "#4BC0C0",
+  transportation: "#9966FF",
+  others: "#dbc8db",
+  saving: "#a1ede9",
 };
 
 const chartConfig = {
@@ -168,11 +168,8 @@ export function PieTransaction() {
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
-        <div className="flex items-center gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
         <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
+          Showing the expense amout of each category
         </div>
       </CardFooter>
     </Card>

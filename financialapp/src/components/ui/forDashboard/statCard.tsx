@@ -4,19 +4,17 @@ import { Card, CardContent, CardTitle } from "@/components/ui/card";
 interface StatCardProps {
   backgroundColor: string;
   icon: LucideIcon;
-  percentage: string;
+
   title: string;
   amount: string;
-  percentageColor: string;
 }
 
 const StatCard: React.FC<StatCardProps> = ({
   backgroundColor,
   icon: Icon,
-  percentage,
+
   title,
   amount,
-  percentageColor,
 }) => {
   return (
     <div className="">
@@ -24,11 +22,6 @@ const StatCard: React.FC<StatCardProps> = ({
         <CardContent>
           <div className="flex items-center justify-between">
             <div>
-              <span
-                className={`text-sm font-semibold bg-white p-2 rounded-full ${percentageColor}`}
-              >
-                {percentage}
-              </span>
               <CardTitle className="text-xl mt-2">{title}</CardTitle>
             </div>
             <div>

@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { Settings } from "lucide-react";
+import { Settings, Trash2 } from "lucide-react"; // Import the trash icon for the delete button
 import axios from "axios";
 
 import {
@@ -20,90 +20,94 @@ import {
 import { Input } from "@/components/ui/input";
 import { BudgetPieChart } from "@/components/ui/forBudget/budgetPieChart";
 import ErrorMessage from "@/components/ui/errorMessage";
-import { title } from "process";
+import ConfirmModal from "@/components/ui/confirmModal";
+
+interface Categories {
+  [key: string]: {
+    limit: number;
+    spent: number;
+  };
+}
 
 interface Budget {
   title: string;
   startDate: string;
   deadline: string;
-  categories: Object;
+  categories: Categories;
 }
 
-const initialBudgetData = [
-  {
-    category: "Household",
-    budget: 1000,
-    spent: 800,
-    fill: "#FF6347",
-  },
-  {
-    category: "Shopping",
-    budget: 500,
-    spent: 350,
-    fill: "#FFB6C1",
-  },
-  {
-    category: "Food",
-    budget: 500,
-    spent: 341,
-    fill: "#FFD700",
-  },
-  {
-    category: "Utilities",
-    budget: 500,
-    spent: 293,
-    fill: "#ADFF2F",
-  },
-  {
-    category: "Transportation",
-    budget: 300,
-    spent: 257,
-    fill: "#00BFFF",
-  },
-  {
-    category: "Others",
-    budget: 200,
-    spent: 218,
-    fill: "#9370DB",
-  },
-];
+// Color mapping for each category
+const categoryColors: { [key: string]: string } = {
+  household: "#FF6384",
+  shopping: "#36A2EB",
+  food: "#FFCE56",
+  utilities: "#4BC0C0",
+  transportation: "#9966FF",
+  others: "#dbc8db",
+  saving: "#a1ede9",
+};
+
+// Default categories for new budgets
+const defaultCategories = {
+  household: { limit: 0, spent: 0 },
+  shopping: { limit: 0, spent: 0 },
+  food: { limit: 0, spent: 0 },
+  utilities: { limit: 0, spent: 0 },
+  transportation: { limit: 0, spent: 0 },
+  others: { limit: 0, spent: 0 },
+  saving: { limit: 0, spent: 0 },
+};
 
 export default function Budget() {
+  const [confirmModal, setConfirmModal] = useState(false);
   const [duration, setDuration] = useState({ start: "", end: "" });
-  const [budgetData, setBudgetData] = useState(initialBudgetData);
+  const [budgetData, setBudgetData] = useState<any[]>([]); // Initialize empty array
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isBudgetSet, setIsBudgetSet] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
-
+  const [isUpdating, setIsUpdating] = useState(false); // Distinguish between create and update
   const [error, setError] = useState<string | null>(null);
-  const [budget, setBudget] = useState({
-    title: "",
-    startDate: "",
-    deadline: "",
-    categories: {
-      household: {
-        limit: 0,
-      },
-      food: {
-        limit: 0,
-      },
-      ultilities: {
-        limit: 0,
-      },
-      transportation: {
-        limit: 0,
-      },
-      saving: {
-        limit: 0,
-      },
-      others: {
-        limit: 0,
-      },
-      shopping: {
-        limit: 0,
-      },
-    },
-  });
+  const [categories, setCategories] = useState<Categories>(defaultCategories);
+
+  // Fetch real budget data on component mount
+  useEffect(() => {
+    const fetchBudgetData = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/api/budgets", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("auth")}`,
+          },
+        });
+
+        const budget = response.data.data; // Assuming your API returns the budget data here
+        if (budget) {
+          const categories = budget.categories;
+
+          // Map the categories into the format required by the component, adding colors
+          const formattedBudgetData = Object.keys(categories).map(
+            (category) => ({
+              category: category.charAt(0).toUpperCase() + category.slice(1), // Capitalize category name
+              budget: categories[category].limit,
+              spent: categories[category].spent,
+              fill: categoryColors[category.toLowerCase()] || "#000000", // Assign color
+            })
+          );
+
+          setBudgetData(formattedBudgetData);
+          setDuration({ start: budget.startDate, end: budget.deadline });
+          setCategories(categories); // Set the categories in state for editing
+          setIsBudgetSet(true);
+          setIsUpdating(true); // Switch to update mode
+        } else {
+          setIsUpdating(false); // No budget exists, use create mode
+        }
+      } catch (err) {
+        // No budget found, open the modal for new budget entry
+        setIsModalOpen(true);
+      }
+    };
+
+    fetchBudgetData();
+  }, []);
 
   const totalSpent = useMemo(() => {
     return budgetData.reduce((acc, curr) => acc + curr.spent, 0);
@@ -112,11 +116,6 @@ export default function Budget() {
   const totalBudget = useMemo(() => {
     return budgetData.reduce((acc, curr) => acc + curr.budget, 0);
   }, [budgetData]);
-
-  const handleEditClick = (index: number) => {
-    setSelectedCategory(index);
-    setIsModalOpen(true);
-  };
 
   const handleSaveSettings = async () => {
     setError(null);
@@ -130,13 +129,8 @@ export default function Budget() {
     const endDate = new Date(duration.end);
     endDate.setHours(0, 0, 0, 0); // Normalize 'endDate' to midnight
 
-    if (duration.start == "" || duration.end == "") {
+    if (duration.start === "" || duration.end === "") {
       setError("Start date or End date is not set correctly");
-      return;
-    }
-
-    if (startDate < today) {
-      setError("Start date cannot be before today.");
       return;
     }
 
@@ -146,30 +140,113 @@ export default function Budget() {
     }
 
     // Budget validation
-    for (const item of budgetData) {
-      if (item.budget < 0) {
+    for (const key in categories) {
+      if (categories[key].limit < 0) {
         setError("Budget amounts cannot be negative.");
         return;
       }
     }
 
+    // Create the budget object
+    const budgetToSend = {
+      title: "My Budget",
+      startDate: duration.start,
+      deadline: duration.end,
+      categories,
+    };
+
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/budgets/",
-        budget,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("auth")}`,
-          },
-        }
-      );
-    } catch (err) {}
-    // // setIsBudgetSet(true);
-    // setIsModalOpen(false);
+      if (isUpdating) {
+        // Make PATCH request to update the budget
+        const response = await axios.patch(
+          "http://localhost:3000/api/budgets/",
+          budgetToSend,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("auth")}`,
+            },
+          }
+        );
+        // Handle updated budget
+        const updatedBudget = response.data.data;
+        setBudgetData(
+          Object.keys(updatedBudget.categories).map((category) => ({
+            category: category.charAt(0).toUpperCase() + category.slice(1),
+            budget: updatedBudget.categories[category].limit,
+            spent: updatedBudget.categories[category].spent,
+            fill: categoryColors[category.toLowerCase()] || "#000000",
+          }))
+        );
+      } else {
+        // Make POST request to create a new budget
+        const response = await axios.post(
+          "http://localhost:3000/api/budgets/",
+          budgetToSend,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("auth")}`,
+            },
+          }
+        );
+        // Handle new budget
+        const newBudget = response.data.data;
+        setBudgetData(
+          Object.keys(newBudget.categories).map((category) => ({
+            category: category.charAt(0).toUpperCase() + category.slice(1),
+            budget: newBudget.categories[category].limit,
+            spent: newBudget.categories[category].spent,
+            fill: categoryColors[category.toLowerCase()] || "#000000",
+          }))
+        );
+      }
+
+      setDuration({
+        start: budgetToSend.startDate,
+        end: budgetToSend.deadline,
+      });
+      setIsBudgetSet(true);
+      setIsModalOpen(false);
+    } catch (err) {
+      setError("An error occurred while saving the budget.");
+      console.error(err);
+    }
   };
 
   const handleOpenSettings = () => {
     setIsModalOpen(true);
+  };
+
+  const handleCategoryChange = (category: string, value: number) => {
+    setCategories((prevCategories) => ({
+      ...prevCategories,
+      [category]: {
+        ...prevCategories[category],
+        limit: value,
+      },
+    }));
+  };
+
+  // Handle Delete Budget
+  const handleDeleteBudget = async () => {
+    try {
+      // Make DELETE request to delete the budget
+      await axios.delete("http://localhost:3000/api/budgets/", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth")}`,
+        },
+      });
+
+      // Clear local state after deletion
+      setBudgetData([]);
+      setDuration({ start: "", end: "" });
+      setCategories(defaultCategories);
+      setIsBudgetSet(false);
+      setIsUpdating(false);
+      setConfirmModal(false);
+    } catch (err) {
+      setError("An error occurred while deleting the budget.");
+      console.error(err);
+    }
   };
 
   const formatDate = (dateString: string) => {
@@ -179,6 +256,10 @@ export default function Budget() {
       day: "numeric",
       year: "numeric",
     });
+  };
+
+  const handleConfirmModal = () => {
+    setConfirmModal(true);
   };
 
   return (
@@ -203,6 +284,15 @@ export default function Budget() {
                 <Settings size={16} className="mr-2" />
                 Edit Budget
               </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="ml-4 text-red-500"
+                onClick={handleConfirmModal}
+              >
+                <Trash2 size={16} className="mr-2 text-red-500" />
+                Delete Budget
+              </Button>
             </>
           ) : (
             <div className="text-lg">
@@ -217,6 +307,12 @@ export default function Budget() {
       </CardHeader>
       {isBudgetSet && (
         <CardContent className="flex-1 pb-0">
+          {budgetData.some((item) => item.spent >= item.budget * 0.9) && (
+            <p className="text-red-500 font-bold text-center mt-4 underline">
+              Warning: One or more categories are close to or have exceeded
+              their budget!
+            </p>
+          )}
           <BudgetPieChart
             budgetData={budgetData}
             totalSpent={totalSpent}
@@ -229,7 +325,10 @@ export default function Budget() {
                 className="flex items-center justify-between"
               >
                 <div className="w-full">
-                  <p className="font-medium text-lg">{item.category}</p>
+                  <div className="flex flex-row justify-between">
+                    <p className="font-medium text-lg">{item.category}</p>
+                    {item.spent >= item.budget && <p className="">⚠️</p>}
+                  </div>
                   <div className="relative w-full h-6 rounded-full overflow-hidden bg-gray-200">
                     <div
                       className="h-full rounded-full"
@@ -244,24 +343,25 @@ export default function Budget() {
                     </div>
                   </div>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="ml-4"
-                  onClick={() => handleEditClick(index)}
-                ></Button>
               </div>
             ))}
           </div>
         </CardContent>
       )}
+      <ConfirmModal
+        message="Do you want to delete your budget plan?"
+        title="Deleting Budget Plan"
+        isOpen={confirmModal}
+        onClose={() => setConfirmModal(false)}
+        onConfirm={handleDeleteBudget}
+      />
 
       {/* Modal for Setting Duration and Budgets */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="max-w-md overflow-auto max-h-[90%] mx-auto bg-white">
           <DialogHeader>
             <DialogTitle className="text-center">
-              {isBudgetSet ? "Edit Budget Settings" : "Set Your Budget"}
+              {isUpdating ? "Edit Budget Settings" : "Set Your Budget"}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
@@ -299,25 +399,26 @@ export default function Budget() {
                 className="mb-4"
               />
             </div>
-            {budgetData.map((item, index) => (
-              <div key={item.category}>
+
+            {/* Show input fields for each category */}
+            {Object.keys(categories).map((category) => (
+              <div key={category}>
                 <label className="block text-sm font-medium text-gray-700">
-                  {item.category} Budget
+                  {category.charAt(0).toUpperCase() + category.slice(1)} Budget
                 </label>
                 <Input
-                  value={item.budget}
+                  value={categories[category].limit}
                   onChange={(e) =>
-                    setBudgetData((prev) => {
-                      const newBudgetData = [...prev];
-                      newBudgetData[index].budget =
-                        parseFloat(e.target.value) || 0;
-                      return newBudgetData;
-                    })
+                    handleCategoryChange(
+                      category,
+                      parseFloat(e.target.value) || 0
+                    )
                   }
                   className="mb-4"
                 />
               </div>
             ))}
+
             {/* Display error message */}
             {error && <ErrorMessage message={error} />}
           </div>
@@ -326,7 +427,7 @@ export default function Budget() {
               Cancel
             </Button>
             <Button onClick={handleSaveSettings}>
-              {isBudgetSet ? "Save Changes" : "Start Budget"}
+              {isUpdating ? "Save Changes" : "Start Budget"}
             </Button>
           </DialogFooter>
         </DialogContent>

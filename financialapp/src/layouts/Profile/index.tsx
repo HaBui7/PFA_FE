@@ -14,7 +14,7 @@ const ProfilePage = () => {
     email: "",
     password: "",
     birthday: "",
-    initialBalance: "",
+
     currentBalance: "",
   });
   const [loading, setLoading] = useState(true);
@@ -156,19 +156,7 @@ const ProfilePage = () => {
               className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Initial Balance
-            </label>
-            <input
-              type="number"
-              name="initialBalance"
-              value={formData.initialBalance}
-              onChange={handleChange}
-              disabled={!isEditing}
-              className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            />
-          </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Current Balance
@@ -176,9 +164,8 @@ const ProfilePage = () => {
             <input
               type="number"
               name="currentBalance"
+              disabled={true}
               value={formData.currentBalance}
-              onChange={handleChange}
-              disabled={!isEditing}
               className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
