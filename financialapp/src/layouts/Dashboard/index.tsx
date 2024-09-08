@@ -11,15 +11,18 @@ type Transaction = {
   type: "income" | "expense";
   transactionAmount: number;
 };
-interface SavingPlan {
-  goalName: string;
-  currentAmount: number;
-  targetAmount: number;
-  targetDate: string;
-}
+
 const Dashboard = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [savingPlan, setSavingPlan] = useState<SavingPlan>(); // Saving plan state
+  const [savingPlan, setSavingData] = useState({
+    goalName: "",
+    targetAmount: 0,
+    currentAmount: 0,
+    targetDate: "",
+    isAutoSavingEnabled: false,
+    autoSavingPercentage: 0,
+  });
+  const [noSavingGoal, setNoSavingGoal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -37,19 +40,25 @@ const Dashboard = () => {
           }
         );
         setTransactions(transactionResponse.data.data.transactions);
+        console.log(transactions);
 
         // Fetch saving plan
         const savingResponse = await axios.get(
-          "http://localhost:3000/api/saving",
+          "http://localhost:3000/api/saving/",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("auth")}`,
             },
           }
         );
-        setSavingPlan(savingResponse.data.data); // Set saving plan data
+
+        setSavingData(savingResponse.data.data); // Set saving plan data
       } catch (err) {
-        if (err instanceof Error) setError(err.message);
+        if (axios.isAxiosError(err) && err.response?.status === 404) {
+          setNoSavingGoal(true);
+        } else if (err instanceof Error) {
+          setError(err.message);
+        }
       } finally {
         setLoading(false);
       }
@@ -111,7 +120,7 @@ const Dashboard = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {savingPlan ? (
+              {!noSavingGoal ? (
                 <div>
                   <p className="font-bold text-lg">
                     Goal Name: {savingPlan.goalName.toUpperCase()}
