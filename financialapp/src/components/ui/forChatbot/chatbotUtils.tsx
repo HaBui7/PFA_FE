@@ -37,7 +37,7 @@ export const fetchConversations = async (
 
     return conversations;
   } catch (error) {
-    if (error.code === 'ERR_NETWORK') {
+    if (error.code === "ERR_NETWORK") {
       console.error("Network error while fetching conversations:", error);
     } else {
       console.error("Error fetching conversations:", error);
@@ -46,9 +46,11 @@ export const fetchConversations = async (
   }
 };
 
-export const generateResponse = async (
+export const generateResponse = (
   conversation_id: string,
-  inputValue: string
+  inputValue: string,
+  onMessage: (message: any) => void,
+  onError: (error: any) => void
 ) => {
   try {
     const responseLength = localStorage.getItem("response_length") || "short";
@@ -56,20 +58,18 @@ export const generateResponse = async (
       localStorage.getItem("temperature") || "0.5"
     );
 
-    // Get conversation messages from local storage
     const conversationMessages = JSON.parse(
       localStorage.getItem("conversation_messages") || "[]"
     );
 
-    // Append the user's inputValue to the conversation messages
     const updatedMessages = [
       ...conversationMessages,
-      { "role": "user", "content": inputValue },
+      { role: "user", content: inputValue },
     ];
 
     const payload: any = {
       conversation_id,
-      messages: updatedMessages, // Use updated messages in the payload
+      messages: updatedMessages,
       response_length: responseLength,
       temperature: temperature,
       transaction_start_date: "",
@@ -87,44 +87,68 @@ export const generateResponse = async (
       payload.transaction_end_date = enddate;
     }
 
-    const response = await axios.post(
-      "http://localhost:3000/api/gpt/generate",
-      payload,
-      {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("auth"),
-        },
-      }
-    );
+    fetch("http://localhost:3000/api/gpt/generate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("auth"),
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((response) => response.body)
+      .then((body) => {
+        const reader = body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
 
-    console.log(response.data);
-    return response.data.content;
+        reader.read().then(function processText({ done, value }) {
+          if (done) {
+            return;
+          }
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split("\n");
+          buffer = lines.pop(); // Keep the last partial line in the buffer
+
+          lines.forEach((line) => {
+            if (line.trim()) {
+              try {
+                const data = JSON.parse(line);
+                onMessage(data);
+              } catch (parseError) {
+                console.error("Error parsing JSON:", parseError);
+                console.error("Response text causing error:", line);
+                onError(parseError);
+              }
+            }
+          });
+
+          return reader.read().then(processText);
+        });
+      })
+      .catch((error) => {
+        onError(error);
+      });
   } catch (error) {
-    if (error.code === 'ERR_NETWORK') {
-      console.error("Network error while generating response:", error);
-    } else {
-      console.error("Error generating response:", error);
-    }
+    console.error("Error generating response:", error);
     throw error;
   }
 };
 
-export const fetchPrompts = async (setPrompts: (prompts: string[]) => void) => {
+export const getPrompts = async (messages: any[]) => {
   try {
     const response = await axios.post(
       "http://localhost:3000/api/gpt/getPrompts",
-      {},
+      { messages },
       {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("auth"),
         },
       }
     );
-    if (response.data.prompts && Array.isArray(response.data.prompts)) {
-      setPrompts(response.data.prompts);
-    }
+    return response.data.prompts;
   } catch (error) {
-    if (error.code === 'ERR_NETWORK') {
+    if (error.code === "ERR_NETWORK") {
       console.error("Network error while fetching prompts:", error);
     } else {
       console.error("Error fetching prompts:", error);
@@ -145,7 +169,7 @@ export const getTransactionCount = async (startdate, enddate) => {
     );
     console.log(response);
   } catch (error) {
-    if (error.code === 'ERR_NETWORK') {
+    if (error.code === "ERR_NETWORK") {
       console.error("Network error while fetching transaction count:", error);
     } else {
       console.error("Error fetching transaction count:", error);
