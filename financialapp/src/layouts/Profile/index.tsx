@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import ConfirmModal from "@/components/ui/confirmModal";
+import avatar from "@/assets/avatar.jpg";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -56,7 +57,7 @@ const ProfilePage = () => {
 
   const handleSave = async () => {
     try {
-      await axios.put("http://localhost:3000/api/users/profile", formData, {
+      await axios.put("http://localhost:3000/api/profile", formData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("auth")}`,
         },
@@ -93,7 +94,7 @@ const ProfilePage = () => {
       <div className="w-full max-w-7xl mx-auto">
         <div className="flex items-center mb-8">
           <img
-            src="https://via.placeholder.com/100"
+            src={avatar}
             alt="Profile"
             className="w-24 h-24 rounded-full mr-4"
           />
