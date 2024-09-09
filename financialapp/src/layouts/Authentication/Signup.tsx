@@ -162,7 +162,7 @@ const Signup = () => {
               htmlFor="currentBalance"
               className="my-3 block text-sm font-medium leading-6 text-gray-900"
             >
-              current Balance
+              Current Balance
             </label>
             <div className="my-3">
               <input
