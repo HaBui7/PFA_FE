@@ -38,6 +38,7 @@ interface ChatbotTemplateProps {
   setEndDate: React.Dispatch<React.SetStateAction<string>>;
   isFadingOut: boolean;
   isProcessing: boolean;
+  promptsLoading: boolean;
 }
 
 const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
@@ -71,6 +72,7 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
   setEndDate,
   isFadingOut,
   isProcessing,
+  promptsLoading,
 }) => {
   const navigate = useNavigate();
   const wrapDollarTextInGreen = (html) => {
