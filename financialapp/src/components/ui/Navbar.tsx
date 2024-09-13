@@ -3,14 +3,36 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import logo from "@/assets/logo.webp";
 import { Menu, X, ChevronDown } from "lucide-react";
 import avatar from "@/assets/avatar.jpg";
+import axios from "axios";
 
 const Navbar = () => {
+  const [loading, setLoading] = useState(false);
+  const [balance, setBalance] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState("");
   const navigate = useNavigate();
   const location = useLocation(); // Get current path
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/api/profile/", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("auth")}`, // Assuming you use JWT tokens
+          },
+        });
+        const userBalance = response.data.data.user.currentBalance;
+        localStorage.setItem("balance", userBalance);
+        setBalance(userBalance);
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching user current balance:", err);
+      }
+    };
+    fetchUserProfile();
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem("auth");
@@ -27,7 +49,9 @@ const Navbar = () => {
     setIsLoggedIn(false);
     navigate("/login");
   };
-
+  if (loading) {
+    return <p>Loading...</p>;
+  }
   // Define a function to determine if a link is active
   const isActive = (path: string) => location.pathname === path;
 
@@ -96,21 +120,28 @@ const Navbar = () => {
           )}
         </Link>
       </div>
+
       <div className="hidden md:flex items-center space-x-4">
+        {/* <div className="underline"> Current Balance: {balance}</div> */}
         {isLoggedIn ? (
           <div className="relative">
-            <button
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="flex items-center space-x-2 focus:outline-none"
-            >
-              <img
-                src={avatar}
-                alt="User Avatar"
-                className="h-8 w-8 rounded-full"
-              />
-              <span className="text-black font-medium">{username}</span>
-              <ChevronDown className="h-4 w-4" />
-            </button>
+            <div className="flex flex-row items-center">
+              <div className="xl:-ml-48 mr-6 border-2  p-2 bg-white text-black font-semibold  rounded-xl">
+                Current Balance: ${localStorage.getItem("balance")}
+              </div>
+              <button
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className="flex items-center space-x-2 focus:outline-none"
+              >
+                <img
+                  src={avatar}
+                  alt="User Avatar"
+                  className="h-8 w-8 rounded-full"
+                />
+                <span className="text-black font-medium">{username}</span>
+                <ChevronDown className="h-4 w-4" />
+              </button>
+            </div>
 
             {/* Dropdown Menu */}
             {dropdownOpen && (

@@ -18,7 +18,11 @@ import {
   Utensils,
   Bus,
   DollarSign,
+  TableOfContents,
+  Zap,
+  PiggyBank,
 } from "lucide-react";
+import EditTransactionModal from "./editModal";
 import ReactPaginate from "react-paginate";
 
 interface Transaction {
@@ -28,14 +32,18 @@ interface Transaction {
   transactionAmount: number;
   title: string;
   _id: string;
+  isSavingsTransfer: boolean;
 }
 
 const categoryIcons = {
-  Household: <Home />,
-  Shopping: <ShoppingCart />,
-  Food: <Utensils />,
-  Utilities: <DollarSign />,
-  Transportation: <Bus />,
+  household: <Home />,
+  shopping: <ShoppingCart />,
+  food: <Utensils />,
+  utilities: <Zap />,
+  transportation: <Bus />,
+  others: <TableOfContents />,
+  income: <DollarSign />,
+  saving: <PiggyBank />,
 };
 
 const categoryOptions = [
@@ -64,6 +72,11 @@ const TransactionList = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [transactionToDelete, setTransactionToDelete] =
     useState<Transaction | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const [transactionToEdit, setTransactionToEdit] =
+    useState<Transaction | null>(null);
+
   const [newTransaction, setNewTransaction] = useState<
     Omit<Transaction, "_id">
   >({
@@ -72,7 +85,9 @@ const TransactionList = () => {
     transactionAmount: 0,
     type: "expense",
     date: "",
+    isSavingsTransfer: false,
   });
+
   const indexOfLastTransaction = (currentPage + 1) * itemsPerPage;
   const indexOfFirstTransaction = indexOfLastTransaction - itemsPerPage;
   const currentTransactions = transactions.slice(
@@ -87,15 +102,20 @@ const TransactionList = () => {
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:3000/api/transactions/",
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("auth")}`,
-            },
-          }
+        const response = await axios.get<{
+          data: { transactions: Transaction[] };
+        }>("http://localhost:3000/api/transactions/", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("auth")}`,
+          },
+        });
+
+        // Modify the transactions array
+        const modifiedTransactions = response.data.data.transactions.filter(
+          (transaction: Transaction) => !transaction.isSavingsTransfer
         );
-        setTransactions(response.data.data.transactions);
+
+        setTransactions(modifiedTransactions.reverse());
         setLoading(false);
       } catch (err) {
         if (err instanceof Error) setError(err.message);
@@ -149,6 +169,10 @@ const TransactionList = () => {
   const handleAddTransaction = async () => {
     // Clear previous validation errors
     setValidationErrors([]);
+    const balance = parseFloat(localStorage.getItem("balance") || "0");
+    const anotherTransactionAmount = parseFloat(
+      newTransaction.transactionAmount.toString()
+    );
 
     // Frontend validation
     const errors = [];
@@ -176,6 +200,14 @@ const TransactionList = () => {
     ) {
       errors.push("Invalid transaction amount.");
     }
+    if (
+      balance < anotherTransactionAmount &&
+      newTransaction.type == "expense"
+    ) {
+      errors.push(
+        "Your current balance is insufficient to complete this transaction."
+      );
+    }
 
     // Date validation: Check if the date is not in the future
     const selectedDate = new Date(newTransaction.date);
@@ -196,7 +228,6 @@ const TransactionList = () => {
     }
 
     try {
-      console.log(newTransaction);
       const response = await axios.post(
         "http://localhost:3000/api/transactions/",
         newTransaction,
@@ -212,6 +243,48 @@ const TransactionList = () => {
       window.location.reload();
     } catch (err) {
       console.error("Error adding transaction:", err);
+    }
+  };
+
+  const openEditModal = (transaction: Transaction) => {
+    console.log(newTransaction);
+    setTransactionToEdit(transaction);
+    // setNewTransaction(transaction); // Pre-fill the form with the selected transaction's data
+    setIsEditModalOpen(true);
+  };
+  const handleUpdateTransaction = async () => {
+    if (!transactionToEdit) return;
+
+    try {
+      const response = await axios.put(
+        `http://localhost:3000/api/transactions/${transactionToEdit._id}`,
+        {
+          date: newTransaction.date,
+          type: newTransaction.type,
+          category: newTransaction.category,
+          transactionAmount: newTransaction.transactionAmount,
+          title: newTransaction.title,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("auth")}`,
+          },
+        }
+      );
+
+      // Update the state with the modified transaction
+      setTransactions((prevTransactions) =>
+        prevTransactions.map((transaction) =>
+          transaction._id === transactionToEdit._id
+            ? { ...transaction, ...response.data.data.transaction }
+            : transaction
+        )
+      );
+
+      setIsModalOpen(false);
+      window.location.reload();
+    } catch (err) {
+      console.error("Error updating transaction:", err);
     }
   };
 
@@ -268,7 +341,10 @@ const TransactionList = () => {
                   {transaction.type === "income" ? "+" : "-"}
                   {formatCurrency(Math.abs(transaction.transactionAmount))}
                 </p>
-                <button className="text-gray-500">
+                <button
+                  className="text-gray-500"
+                  onClick={() => openEditModal(transaction)}
+                >
                   <Pencil />
                 </button>
 
@@ -407,6 +483,14 @@ const TransactionList = () => {
           activeClassName="bg-blue-300 text-white border-blue-500"
         />
       </div>
+      <EditTransactionModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onSubmit={handleUpdateTransaction}
+        transaction={newTransaction}
+        handleInputChange={handleInputChange}
+        validationErrors={validationErrors}
+      />
     </div>
   );
 };

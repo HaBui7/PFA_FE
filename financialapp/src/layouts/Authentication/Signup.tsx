@@ -10,6 +10,7 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [birthday, setBirthday] = useState("");
+  const [currentBalance, setCurrentBalance] = useState<number | null>(null);
   const [message, setMessage] = useState("");
 
   // Validate the user's input based on the backend requirements
@@ -28,6 +29,14 @@ const Signup = () => {
     }
     if (!birthday) {
       setMessage("Please enter your birthday.");
+      return false;
+    }
+    if (
+      currentBalance === null ||
+      isNaN(currentBalance) ||
+      currentBalance <= 0
+    ) {
+      setMessage("Please enter a valid balance.");
       return false;
     }
 
@@ -61,6 +70,7 @@ const Signup = () => {
         email,
         password,
         birthday: formattedBirthday, // Use formatted birthday
+        currentBalance,
       });
 
       if (response.data.token) {
@@ -88,8 +98,8 @@ const Signup = () => {
           WELCOME!
         </p>
         <div className="py-0 mt-1 text-md leading-8 text-gray-600 font-bold">
-          Already have an account?,{" "}
-          <a href="/login" color="blue">
+          Already have an account?{" "}
+          <a href="/login" className="text-black font-bold">
             Sign in
           </a>
         </div>
@@ -149,6 +159,27 @@ const Signup = () => {
               />
             </div>
             <label
+              htmlFor="currentBalance"
+              className="my-3 block text-sm font-medium leading-6 text-gray-900"
+            >
+              Current Balance
+            </label>
+            <div className="my-3">
+              <input
+                type=""
+                id="currentBalance"
+                name="currentBalance"
+                className="pl-5 items-center block w-4/5 rounded-full border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                value={currentBalance !== null ? currentBalance : ""}
+                onChange={(e) =>
+                  setCurrentBalance(
+                    e.target.value ? Number(e.target.value) : null
+                  )
+                }
+              />
+            </div>
+
+            <label
               htmlFor="birthday"
               className="my-3 block text-sm font-medium leading-6 text-gray-900"
             >
@@ -164,17 +195,7 @@ const Signup = () => {
                 onChange={(e) => setBirthday(e.target.value)}
               />
             </div>
-            <div className="">
-              <input
-                type="checkbox"
-                name=""
-                id=""
-                className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-              />
-              <label className="ms-2 text-sm pb-5 text-gray-900 dark:text-gray-300">
-                I agree to the terms & policy
-              </label>
-            </div>
+
             <div className="">
               <button
                 type="button"
@@ -191,7 +212,7 @@ const Signup = () => {
             )}
           </div>
           <img
-            className="w-9/12 hidden md:flex"
+            className="w-10/12 hidden md:flex"
             src="/src/assets/loginimage.svg"
             alt="Hello"
           />

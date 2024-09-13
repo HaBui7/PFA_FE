@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import ConfirmModal from "@/components/ui/confirmModal";
+import avatar from "@/assets/avatar.jpg";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ const ProfilePage = () => {
     email: "",
     password: "",
     birthday: "",
-    initialBalance: "",
+
     currentBalance: "",
   });
   const [loading, setLoading] = useState(true);
@@ -56,7 +57,7 @@ const ProfilePage = () => {
 
   const handleSave = async () => {
     try {
-      await axios.put("http://localhost:3000/api/users/profile", formData, {
+      await axios.put("http://localhost:3000/api/profile", formData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("auth")}`,
         },
@@ -93,7 +94,7 @@ const ProfilePage = () => {
       <div className="w-full max-w-7xl mx-auto">
         <div className="flex items-center mb-8">
           <img
-            src="https://via.placeholder.com/100"
+            src={avatar}
             alt="Profile"
             className="w-24 h-24 rounded-full mr-4"
           />
@@ -155,19 +156,7 @@ const ProfilePage = () => {
               className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Initial Balance
-            </label>
-            <input
-              type="number"
-              name="initialBalance"
-              value={formData.initialBalance}
-              onChange={handleChange}
-              disabled={!isEditing}
-              className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            />
-          </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Current Balance
@@ -175,9 +164,8 @@ const ProfilePage = () => {
             <input
               type="number"
               name="currentBalance"
+              disabled={true}
               value={formData.currentBalance}
-              onChange={handleChange}
-              disabled={!isEditing}
               className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
