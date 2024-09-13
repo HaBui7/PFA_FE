@@ -147,8 +147,8 @@ export default function Chatbot() {
 
   const handleResetClick = () => {
     // Clear conversation_messages from local storage
-    localStorage.setItem("conversation_messages", []);
-    localStorage.setItem("conversation_title", "")
+    localStorage.setItem("conversation_messages", "[]");
+    localStorage.setItem("conversation_title", "");
     setMessages([]); // Clear messages state
     navigate("/chatbot");
   };
@@ -189,42 +189,60 @@ export default function Chatbot() {
         .catch((error) => showPopupMessage("error", `Error: ${error.message}`));
     }
   }, [conversationId]);
+
   React.useEffect(() => {
     localStorage.setItem("conversation_messages", JSON.stringify(messages));
   }, [messages]);
 
+  React.useEffect(() => {
+    const chatWindow = document.getElementById("chat-window");
+    if (chatWindow) {
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+  }, [messages]);
+
   return (
-    <ChatbotTemplate
-      inputValue={inputValue}
-      setInputValue={setInputValue}
-      isPopupVisible={isPopupVisible}
-      setIsPopupVisible={setIsPopupVisible}
-      conversations={conversations}
-      setConversations={setConversations}
-      messages={messages}
-      setMessages={setMessages}
-      title={title}
-      setTitle={setTitle}
-      conversationId={conversationId}
-      handleInputChange={handleInputChange}
-      handleSendMessage={handleSendMessage}
-      handleResetClick={handleResetClick}
-      toggleHistoryPopup={toggleHistoryPopup}
-      toggleSettingsPopup={toggleSettingsPopup}
-      handleSaveSettings={handleSaveSettings}
-      handleResetSettings={handleResetSettings}
-      formatDate={formatDate}
-      popupMessage={popupMessage}
-      isFadingOut={isFadingOut}
-      isSettingsPopupVisible={isSettingsPopupVisible}
-      responseLength={responseLength}
-      setResponseLength={setResponseLength}
-      temperature={temperature}
-      setTemperature={setTemperature}
-      startDate={startDate}
-      setStartDate={setStartDate}
-      endDate={endDate}
-      setEndDate={setEndDate}
-    />
+    <div className="flex flex-col h-screen">
+      {/* Chat window */}
+      <div className="flex-1 overflow-y-auto p-4 bg-gray-100" id="chat-window">
+        {messages.map((message, index) => (
+          <div
+            key={index}
+            className={`flex w-full ${
+              message.role === "user" ? "justify-end" : "justify-start"
+            }`}
+          >
+            <div
+              className={`${
+                message.role === "user"
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-300 text-black"
+              } p-3 m-2 rounded-lg max-w-xs`}
+            >
+              {message.content}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Input field */}
+      <div className="p-4 bg-white border-t border-gray-200">
+        <div className="flex items-center">
+          <input
+            type="text"
+            className="flex-grow p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={inputValue}
+            onChange={handleInputChange}
+            placeholder="Type a message..."
+          />
+          <button
+            onClick={handleSendMessage}
+            className="ml-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none"
+          >
+            Send
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
