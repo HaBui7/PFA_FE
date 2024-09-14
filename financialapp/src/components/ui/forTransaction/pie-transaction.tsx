@@ -101,13 +101,11 @@ export function PieTransaction() {
       .reduce((acc, transaction) => {
         const category = transaction.category;
 
-        console.log(`Adding category: ${category}`);
         acc[category] = {
           category,
           transactionAmount: 0,
           fill: categoryColors[category] || "#000000", // Default to black if category not found
         };
-        console.log(`Fill color: ${acc[category].fill}`);
 
         acc[category].transactionAmount += transaction.transactionAmount;
         return acc;
@@ -135,8 +133,8 @@ export function PieTransaction() {
         <ChartContainer config={chartConfig} className="mx-auto aspect-square ">
           <PieChart>
             <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
+              cursor={{ stroke: "red", strokeWidth: 2 }}
+              content={<ChartTooltipContent className="!bg-white" hideLabel />}
             />
             <Pie
               data={chartData}
