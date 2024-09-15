@@ -5,7 +5,6 @@ import {
   fetchConversations,
   generateResponse,
   getTransactionCount,
-  getPrompts,
 } from "@/components/ui/forChatbot/chatbotUtils";
 import ChatbotTemplate from "@/components/ui/forChatbot/chatbotTemplate";
 
