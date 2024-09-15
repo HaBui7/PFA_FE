@@ -46,6 +46,20 @@ export default function Chatbot() {
   };
 
   const handleSendMessage = async () => {
+    if (!inputValue.trim()) {
+      return;
+    }
+
+    if (isProcessing) {
+      showPopupMessage(
+        "error",
+        "Please wait until the current message is processed"
+      );
+      return;
+    }
+
+    setIsProcessing(true);
+
     const newMessage = { content: inputValue, role: "user" };
     setMessages((prevMessages) => [...prevMessages, newMessage]);
     setInputValue(""); // Clear input field
@@ -94,6 +108,7 @@ export default function Chatbot() {
 
       return () => {
         eventSource.close();
+        setIsProcessing(false); 
       };
     } catch (error) {
       const errorMessage = {
@@ -102,6 +117,9 @@ export default function Chatbot() {
       };
       setMessages((prevMessages) => [...prevMessages, errorMessage]);
       showPopupMessage("error", `Error: ${error.message}`);
+      setIsProcessing(false); 
+    } finally {
+      setIsProcessing(false); 
     }
   };
 
