@@ -1,6 +1,6 @@
 import * as React from "react";
 import { marked } from "marked";
-import { Send, RefreshCw, Settings } from "lucide-react";
+import { Send, RefreshCw, Settings, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
@@ -84,71 +84,76 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
     );
   };
   return (
-    <div className="min-h-screen flex flex-col justify-between h-screen">
-      {popupMessage && (
-        <div
-          className={`fixed left-1/2 transform -translate-x-1/2 mt-4 p-4 rounded ${
-            popupMessage.type === "success" ? "bg-green-500" : "bg-red-500"
-          } text-white ${isFadingOut ? "fade-out" : "fade-in"} ${
-            !isFadingOut && !popupMessage ? "initial" : ""
-          }`}
-          style={{ top: "4rem" }}
-        >
-          {popupMessage.message}
-        </div>
-      )}
-      <nav>{/* Navigation bar content */}</nav>
-      <main className="flex-grow flex flex-col items-center justify-center">
-        {messages && messages.length === 0 ? (
-          <div className="text-center">
-            <h1 className="text-xl font-semibold">Powered by RMIT Val</h1>
-            <p className="text-gray-500">Model: GPT-4</p>
-            <p className="text-sm text-gray-400 mt-4">
-              Disclaimer: We utilize your data in our services to process and
-              provide advice. By using our services, you consent to this use of
-              your data.
-            </p>
-          </div>
-        ) : (
-          <div className="flex flex-col h-full w-full items-center">
-            {/* Chat window */}
-            <div
-              className="flex-1 overflow-y-auto p-0 px-4 w-full max-w-8xl shadow-inner"
-              id="chat-window"
-            >
-              <div className="overflow-y-auto h-full w-full">
-                {messages.map((message, index) => (
-                  <div
-                    key={index}
-                    className={`flex w-full ${
-                      message.role === "user" ? "justify-end" : "justify-start"
-                    }`}
-                  >
-                    <div
-                      className={`${
-                        message.role === "user"
-                          ? "bg-slate-900 text-slate-50 ml-auto"
-                          : "bg-gray-300 text-black mr-auto mr-4"
-                      } p-3 m-4 rounded-lg max-w-xl`}
-                    >
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html: wrapDollarTextInGreen(
-                            marked(message.content)
-                          ),
-                        }}
-                      ></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+    <div className="flex flex-col ">
+      <div className=" flex flex-col justify-between h-full ">
+        {popupMessage && (
+          <div
+            className={`fixed left-1/2 transform -translate-x-1/2 mt-4 p-4 rounded ${
+              popupMessage.type === "success" ? "bg-green-500" : "bg-red-500"
+            } text-white ${isFadingOut ? "fade-out" : "fade-in"} ${
+              !isFadingOut && !popupMessage ? "initial" : ""
+            }`}
+            style={{ top: "4rem" }}
+          >
+            {popupMessage.message}
           </div>
         )}
-      </main>
+        <nav>{/* Navigation bar content */}</nav>
+        <main className="  overflow-auto h-[28rem]  sticky ">
+          {messages && messages.length === 0 ? (
+            <div className="text-center mt-20">
+              <h1 className="text-xl font-semibold">Powered by RMIT Val</h1>
+              <p className="text-gray-500">Model: GPT-4</p>
+              <p className="text-sm text-gray-400 mt-4">
+                Disclaimer: We utilize your data in our services to process and
+                provide advice. By using our services, you consent to this use
+                of your data.
+              </p>
+            </div>
+          ) : (
+            <div className="flex flex-col  w-full items-center ">
+              {/* Chat window */}
+              <div
+                className="flex-1  p-0 px-4 w-full max-w-8xl  " // Set a fixed height with h-96 or any value
+                id="chat-window"
+              >
+                <div className=" h-full w-full">
+                  {messages.map((message, index) => (
+                    <div
+                      key={index}
+                      className={`flex w-full ${
+                        message.role === "user"
+                          ? "justify-end"
+                          : "justify-start"
+                      }`}
+                    >
+                      <div
+                        className={`${
+                          message.role === "user"
+                            ? "bg-slate-900 text-slate-50 ml-auto"
+                            : "bg-gray-300 text-black mr-4"
+                        } p-3 m-4 rounded-lg max-w-xl`}
+                      >
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html: wrapDollarTextInGreen(
+                              marked(message.content)
+                            ),
+                          }}
+                        ></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </main>
 
-      {/* Example Questions */}
-      <section className="flex flex-col items-center px-8 pb-8 text-black">
+        {/* Example Questions */}
+      </div>
+
+      <section className="flex flex-col items-center  text-black mt-20  ">
         <div className="mt-8 w-full max-w-2xl">
           <Input
             placeholder="Ask me anything..."
@@ -192,11 +197,7 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
             className="p-4 border border-gray-300 rounded-full bg-white shadow-md"
             onClick={toggleHistoryPopup}
           >
-            <img
-              src={historyIcon}
-              alt="Conversation History"
-              className="h-6 w-6"
-            />
+            <History className="h-5 w-5 text-gray-500" />
           </Button>
         </div>
 

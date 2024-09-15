@@ -148,7 +148,7 @@ export default function Chatbot() {
   const handleResetClick = () => {
     // Clear conversation_messages from local storage
     localStorage.setItem("conversation_messages", []);
-    localStorage.setItem("conversation_title", "")
+    localStorage.setItem("conversation_title", "");
     setMessages([]); // Clear messages state
     navigate("/chatbot");
   };
