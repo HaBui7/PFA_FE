@@ -4,6 +4,7 @@ import { Send, RefreshCw, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
+import historyIcon from "/src/assets/history_icon.png";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface ChatbotTemplateProps {
@@ -72,7 +73,6 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
   setEndDate,
   isFadingOut,
   isProcessing,
-  promptsLoading,
 }) => {
   const navigate = useNavigate();
   const wrapDollarTextInGreen = (html) => {
@@ -83,9 +83,8 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
       }
     );
   };
-
   return (
-    <div className="min-h-screen flex flex-col justify-between">
+    <div className="min-h-screen flex flex-col justify-between h-screen">
       {popupMessage && (
         <div
           className={`fixed left-1/2 transform -translate-x-1/2 mt-4 p-4 rounded ${
@@ -100,7 +99,6 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
       )}
       <nav>{/* Navigation bar content */}</nav>
       <main className="flex-grow flex flex-col items-center justify-center">
-        <h1 className="text-2xl font-bold text-center mt-4">{title}</h1>
         {messages && messages.length === 0 ? (
           <div className="text-center">
             <h1 className="text-xl font-semibold">Powered by RMIT Val</h1>
@@ -112,40 +110,45 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
             </p>
           </div>
         ) : (
-          <div className="p-4 bg-gray-100 border-t border-gray-300 w-full">
-            {messages &&
-              messages.map((message, index) => (
-                <div
-                  key={index}
-                  className="p-4 mb-4 bg-white border border-gray-300 rounded-lg"
-                >
+          <div className="flex flex-col h-full w-full items-center">
+            {/* Chat window */}
+            <div
+              className="flex-1 overflow-y-auto p-0 px-4 w-full max-w-8xl shadow-inner"
+              id="chat-window"
+            >
+              <div className="overflow-y-auto h-full w-full">
+                {messages.map((message, index) => (
                   <div
-                    dangerouslySetInnerHTML={{
-                      __html: wrapDollarTextInGreen(marked(message.content)),
-                    }}
-                  ></div>
-                </div>
-              ))}
+                    key={index}
+                    className={`flex w-full ${
+                      message.role === "user" ? "justify-end" : "justify-start"
+                    }`}
+                  >
+                    <div
+                      className={`${
+                        message.role === "user"
+                          ? "bg-slate-900 text-slate-50 ml-auto"
+                          : "bg-gray-300 text-black mr-auto mr-4"
+                      } p-3 m-4 rounded-lg max-w-xl`}
+                    >
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: wrapDollarTextInGreen(
+                            marked(message.content)
+                          ),
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         )}
       </main>
 
       {/* Example Questions */}
       <section className="flex flex-col items-center px-8 pb-8 text-black">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2 w-full max-w-4xl">
-          <Button className="p-6 border border-gray-300 rounded-2xl bg-white text-left">
-            <Skeleton className="block text-base font-semibold leading-tight" />
-          </Button>
-          <Button className="p-6 border border-gray-300 rounded-2xl bg-white text-left">
-            <Skeleton className="block text-base font-semibold leading-tight" />
-          </Button>
-          <Button className="p-6 border border-gray-300 rounded-2xl bg-white text-left">
-            <Skeleton className="block text-base font-semibold leading-tight" />
-          </Button>
-          <Button className="p-6 border border-gray-300 rounded-2xl bg-white text-left">
-            <Skeleton className="block text-base font-semibold leading-tight" />
-          </Button>
-        </div>
         <div className="mt-8 w-full max-w-2xl">
           <Input
             placeholder="Ask me anything..."
@@ -189,9 +192,11 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
             className="p-4 border border-gray-300 rounded-full bg-white shadow-md"
             onClick={toggleHistoryPopup}
           >
-            <span className="block text-base text-gray-500 font-semibold leading-tight">
-              Conversation History
-            </span>
+            <img
+              src={historyIcon}
+              alt="Conversation History"
+              className="h-6 w-6"
+            />
           </Button>
         </div>
 
