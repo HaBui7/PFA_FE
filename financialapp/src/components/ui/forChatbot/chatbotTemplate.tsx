@@ -125,7 +125,7 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
           {messages && messages.length === 0 ? (
             <div className="text-center mt-20">
               <h1 className="text-xl font-semibold">Powered by RMIT Val</h1>
-              <p className="text-gray-500">Model: GPT-4</p>
+              <p className="text-gray-500">Model: GPT-4o</p>
               <p className="text-sm text-gray-400 mt-4">
                 Disclaimer: We utilize your data in our services to process and
                 provide advice. By using our services, you consent to this use
