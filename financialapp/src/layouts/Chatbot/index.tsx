@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   fetchConversations,
@@ -28,7 +28,14 @@ export default function Chatbot() {
   const [endDate, setEndDate] = React.useState("");
   const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = React.useState(false);
-  const lastBotMessageRef = useRef(null);
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [commandBox, setCommandBox] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const commands = ["/create", "/update", "/delete"];
+  const filteredCommands = commands.filter((command) =>
+    command.startsWith(inputValue)
+  );
 
   const showPopupMessage = (type: string, message: string) => {
     setPopupMessage({ type, message });
@@ -42,7 +49,71 @@ export default function Chatbot() {
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(event.target.value);
+    const value = event.target.value;
+    setInputValue(value);
+
+    if (value.startsWith("/")) {
+      setShowTooltip(true);
+    } else {
+      setShowTooltip(false);
+    }
+
+    if (commands.includes(value.trim())) {
+      setCommandBox(value.trim());
+      setInputValue("");
+    }
+  };
+
+  const handleCommandClick = (command: string) => {
+    setCommandBox(command);
+    setInputValue("");
+    setShowTooltip(false);
+    setSelectedIndex(-1);
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (showTooltip) {
+      if (event.key === "ArrowDown") {
+        setSelectedIndex(
+          (prevIndex) => (prevIndex + 1) % filteredCommands.length
+        );
+      } else if (event.key === "ArrowUp") {
+        setSelectedIndex(
+          (prevIndex) =>
+            (prevIndex - 1 + filteredCommands.length) % filteredCommands.length
+        );
+      } else if (event.key === "Enter") {
+        if (filteredCommands.length === 1) {
+          handleCommandClick(filteredCommands[0]);
+        } else if (selectedIndex >= 0) {
+          handleCommandClick(filteredCommands[selectedIndex]);
+        }
+      }
+    } else if (event.key === "Enter") {
+      handleSendMessage();
+    } else if (event.key === "Backspace" && inputValue === "" && commandBox) {
+      setCommandBox(null);
+    }
+  };
+
+  const getPlaceholderText = () => {
+    switch (commandBox) {
+      case '/create':
+        return 'Enter details to add and save any transactions...';
+      case '/update':
+        return 'Enter details to update any transactions...';
+      case '/delete':
+        return 'Enter details to delete any transactions data...';
+      default:
+        return 'Ask me anything...';
+    }
+  };
+
+  const handleRemoveCommandBox = () => {
+    setCommandBox(null);
   };
 
   const handleSendMessage = async () => {
@@ -108,7 +179,7 @@ export default function Chatbot() {
 
       return () => {
         eventSource.close();
-        setIsProcessing(false); 
+        setIsProcessing(false);
       };
     } catch (error) {
       const errorMessage = {
@@ -117,9 +188,9 @@ export default function Chatbot() {
       };
       setMessages((prevMessages) => [...prevMessages, errorMessage]);
       showPopupMessage("error", `Error: ${error.message}`);
-      setIsProcessing(false); 
+      setIsProcessing(false);
     } finally {
-      setIsProcessing(false); 
+      setIsProcessing(false);
     }
   };
 
@@ -224,6 +295,7 @@ export default function Chatbot() {
       setTitle={setTitle}
       conversationId={conversationId}
       handleInputChange={handleInputChange}
+      handleCommandClick={handleCommandClick}
       handleSendMessage={handleSendMessage}
       handleResetClick={handleResetClick}
       toggleHistoryPopup={toggleHistoryPopup}
@@ -242,6 +314,16 @@ export default function Chatbot() {
       setStartDate={setStartDate}
       endDate={endDate}
       setEndDate={setEndDate}
+      showTooltip={showTooltip}
+      setShowTooltip={setShowTooltip}
+      selectedIndex={selectedIndex}
+      setSelectedIndex={setSelectedIndex}
+      filteredCommands={filteredCommands}
+      commandBox={commandBox}
+      getPlaceholderText={getPlaceholderText}
+      handleRemoveCommandBox={handleRemoveCommandBox}
+      handleKeyDown={handleKeyDown}
+      inputRef={inputRef}
     />
   );
 }

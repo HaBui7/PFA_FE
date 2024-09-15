@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 
-
 interface ChatbotTemplateProps {
   inputValue: string;
   setInputValue: React.Dispatch<React.SetStateAction<string>>;
@@ -20,6 +19,7 @@ interface ChatbotTemplateProps {
   setTitle: React.Dispatch<React.SetStateAction<string>>;
   conversationId: string;
   handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleCommandClick: (command: string) => void;
   handleSendMessage: () => void;
   handleResetClick: () => void;
   toggleHistoryPopup: () => void;
@@ -39,7 +39,16 @@ interface ChatbotTemplateProps {
   setEndDate: React.Dispatch<React.SetStateAction<string>>;
   isFadingOut: boolean;
   isProcessing: boolean;
-  promptsLoading: boolean;
+  showTooltip: boolean;
+  setShowTooltip: React.Dispatch<React.SetStateAction<boolean>>;
+  selectedIndex: number;
+  setSelectedIndex: React.Dispatch<React.SetStateAction<number>>;
+  filteredCommands: string[];
+  commandBox: string;
+  getPlaceholderText: () => string;
+  handleRemoveCommandBox: () => void;
+  inputRef: React.RefObject<HTMLInputElement>;
+  handleKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
 const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
@@ -54,6 +63,7 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
   title,
   conversationId,
   handleInputChange,
+  handleCommandClick,
   handleSendMessage,
   handleResetClick,
   toggleHistoryPopup,
@@ -73,9 +83,18 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
   setEndDate,
   isFadingOut,
   isProcessing,
+  showTooltip,
+  selectedIndex,
+  filteredCommands,
+  commandBox,
+  getPlaceholderText,
+  handleRemoveCommandBox,
+  inputRef,
+  handleKeyDown,
 }) => {
   const navigate = useNavigate();
   const { navHeight } = useOutletContext();
+
   const wrapDollarTextInGreen = (html) => {
     return html.replace(
       /(\$[0-9,]+(?:\.[0-9]{1,2})?|\b[0-9,]+(?:\.[0-9]{1,2})?\$)/g,
@@ -155,18 +174,56 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
 
         {/* Example Questions */}
         <section className="flex flex-col items-center  text-black ">
-          <div className="mt-8 w-full max-w-2xl">
-            <Input
-              placeholder="Ask me anything..."
-              className="rounded-full px-4 py-3 shadow-lg"
-              value={inputValue}
-              onChange={handleInputChange}
-              onKeyDown={(event) => {
-                if (event.key === "Enter") {
-                  handleSendMessage();
-                }
-              }}
-            />
+          <div className="mt-8 w-full max-w-2xl relative">
+            <div className="input-wrapper">
+              {commandBox && <div className="command-box">{commandBox}</div>}
+              <Input
+                ref={inputRef}
+                placeholder={getPlaceholderText()}
+                className="rounded-full px-4 py-3 shadow-lg"
+                value={inputValue}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                style={{ paddingLeft: commandBox ? "100px" : "16px" }} // Adjust padding based on command box presence
+              />
+            </div>
+            {showTooltip && filteredCommands.length > 0 && (
+              <div className="tooltip">
+                <ul>
+                  {filteredCommands.map((command, index) => (
+                    <li
+                      key={command}
+                      onClick={() => handleCommandClick(command)}
+                      className={selectedIndex === index ? "bg-gray-200" : ""}
+                    >
+                      <span className="text-blue-500">{command}</span> -{" "}
+                      {command === "/create" ? (
+                        <>
+                          <span className="ml-1 bg-aiLogo text-aiLogo-foreground text-xs px-1 rounded">
+                            AI
+                          </span>{" "}
+                          Add any transactions and save it to your account
+                        </>
+                      ) : command === "/update" ? (
+                        <>
+                          <span className="ml-1 bg-aiLogo text-aiLogo-foreground text-xs px-1 rounded">
+                            AI
+                          </span>{" "}
+                          Update any existing transactions in your account
+                        </>
+                      ) : (
+                        <>
+                          <span className="ml-1 bg-aiLogo text-aiLogo-foreground text-xs px-1 rounded">
+                            AI
+                          </span>{" "}
+                          Delete any transactions from your account
+                        </>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
           {/* Action Buttons */}
           <div className="mt-4 flex space-x-4 justify-center">
