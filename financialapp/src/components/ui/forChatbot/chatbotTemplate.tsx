@@ -197,28 +197,11 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
                       className={selectedIndex === index ? "bg-gray-200" : ""}
                     >
                       <span className="text-blue-500">{command}</span> -{" "}
-                      {command === "/create" ? (
-                        <>
-                          <span className="ml-1 bg-aiLogo text-aiLogo-foreground text-xs px-1 rounded">
-                            AI
-                          </span>{" "}
-                          Add any transactions and save it to your account
-                        </>
-                      ) : command === "/update" ? (
-                        <>
-                          <span className="ml-1 bg-aiLogo text-aiLogo-foreground text-xs px-1 rounded">
-                            AI
-                          </span>{" "}
-                          Update any existing transactions in your account
-                        </>
-                      ) : (
-                        <>
-                          <span className="ml-1 bg-aiLogo text-aiLogo-foreground text-xs px-1 rounded">
-                            AI
-                          </span>{" "}
-                          Delete any transactions from your account
-                        </>
-                      )}
+                      {command === "/create"
+                        ? "Add any transactions and save it to your account"
+                        : command === "/update"
+                        ? "Update any existing transactions in your account"
+                        : "Delete any transactions from your account"}
                     </li>
                   ))}
                 </ul>

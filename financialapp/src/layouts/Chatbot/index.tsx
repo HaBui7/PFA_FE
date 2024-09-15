@@ -101,14 +101,14 @@ export default function Chatbot() {
 
   const getPlaceholderText = () => {
     switch (commandBox) {
-      case '/create':
-        return 'Enter details to add and save any transactions...';
-      case '/update':
-        return 'Enter details to update any transactions...';
-      case '/delete':
-        return 'Enter details to delete any transactions data...';
+      case "/create":
+        return "Enter details to add and save any transactions...";
+      case "/update":
+        return "Enter details to update any transactions...";
+      case "/delete":
+        return "Enter details to delete any transactions data...";
       default:
-        return 'Ask me anything...';
+        return "Ask me anything...";
     }
   };
 
@@ -117,7 +117,10 @@ export default function Chatbot() {
   };
 
   const handleSendMessage = async () => {
-    if (!inputValue.trim()) {
+    const fullMessage = commandBox
+      ? `${commandBox} ${inputValue}`.trim()
+      : inputValue.trim();
+    if (!fullMessage || (commandBox && !inputValue.trim())) {
       return;
     }
 
@@ -131,9 +134,10 @@ export default function Chatbot() {
 
     setIsProcessing(true);
 
-    const newMessage = { content: inputValue, role: "user" };
+    const newMessage = { content: fullMessage, role: "user" };
     setMessages((prevMessages) => [...prevMessages, newMessage]);
     setInputValue(""); // Clear input field
+    setCommandBox(null); // Clear command box
 
     const conversation_id = conversationId || ""; // Use conversationId if available, otherwise empty string
 
@@ -143,7 +147,7 @@ export default function Chatbot() {
 
       const eventSource = generateResponse(
         conversation_id,
-        inputValue,
+        fullMessage,
         (data) => {
           if (data && data.content) {
             botMessage.content += data.content.content;
