@@ -4,6 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import {
   fetchConversations,
   generateResponse,
+  deleteConversation,
 } from "@/components/ui/forChatbot/chatbotUtils";
 import ChatbotTemplate from "@/components/ui/forChatbot/chatbotTemplate";
 
@@ -19,6 +20,8 @@ export default function Chatbot() {
     message: string;
   } | null>(null);
   const [isFadingOut, setIsFadingOut] = React.useState(false);
+  const [isHistoryFadingOut, setIsHistoryFadingOut] = React.useState(false);
+  const [isSettingsFadingOut, setIsSettingsFadingOut] = React.useState(false);
   const [isSettingsPopupVisible, setIsSettingsPopupVisible] =
     React.useState(false);
   const [responseLength, setResponseLength] = React.useState("short");
@@ -35,8 +38,7 @@ export default function Chatbot() {
   const filteredCommands = commands.filter((command) =>
     command.startsWith(inputValue)
   );
-  
-  
+
   const showPopupMessage = (type: string, message: string) => {
     setPopupMessage({ type, message });
     setTimeout(() => {
@@ -213,10 +215,10 @@ export default function Chatbot() {
         showPopupMessage("error", `Error: ${error.message}`);
       }
     } else {
-      setIsFadingOut(true); // Start fade-out effect
+      setIsHistoryFadingOut(true); // Start fade-out effect
       setTimeout(() => {
         setIsPopupVisible(false); // Hide popup after fade-out
-        setIsFadingOut(false); // Reset fade-out state
+        setIsHistoryFadingOut(false); // Reset fade-out state
       }, 500); // Match the duration of the fade-out animation
     }
   };
@@ -230,26 +232,31 @@ export default function Chatbot() {
     localStorage.setItem("temperature", temperature.toString());
     localStorage.setItem("startdate", startDate);
     localStorage.setItem("enddate", endDate);
-    setIsFadingOut(true); // Start fade-out effect
+    setIsSettingsFadingOut(true); // Start fade-out effect
     setTimeout(() => {
       setIsSettingsPopupVisible(false); // Hide popup after fade-out
-      setIsFadingOut(false); // Reset fade-out state
+      setIsSettingsFadingOut(false); // Reset fade-out state
     }, 500); // Match the duration of the fade-out animation
   };
 
   const handleResetSettings = () => {
+    localStorage.setItem("response_length", "short");
+    localStorage.setItem("temperature", "0.5");
+    localStorage.setItem("startdate", "");
+    localStorage.setItem("enddate", "");
     setResponseLength("short");
     setTemperature(0.5);
     setStartDate("");
     setEndDate("");
-    setIsFadingOut(true); // Start fade-out effect
+    setIsSettingsFadingOut(true); // Start fade-out effect
     setTimeout(() => {
       setIsSettingsPopupVisible(false); // Hide popup after fade-out
-      setIsFadingOut(false); // Reset fade-out state
+      setIsSettingsFadingOut(false); // Reset fade-out state
     }, 500); // Match the duration of the fade-out animation
   };
 
   const handleResetClick = () => {
+    // Reset conversation button
     // Clear conversation_messages from local storage
     localStorage.setItem("conversation_messages", JSON.stringify([]));
     localStorage.setItem("conversation_title", "");
@@ -284,6 +291,21 @@ export default function Chatbot() {
     return `${day}${daySuffix(
       day
     )} ${month} ${year}, ${formattedHours}:${minutes} ${period}`;
+  };
+
+  const handleDeleteConversation = async (conversationId: string) => {
+    try {
+      await deleteConversation(conversationId); // Call the API to delete the conversation
+      setConversations((prevConversations) =>
+        prevConversations.filter(
+          (conversation) => conversation.conversation_id !== conversationId
+        )
+      ); // Update the state to remove the conversation
+      showPopupMessage("success", "Conversation deleted successfully.");
+    } catch (error) {
+      console.error("Failed to delete conversation:", error);
+      showPopupMessage("error", `Error: ${error.message}`);
+    }
   };
 
   React.useEffect(() => {
@@ -321,6 +343,8 @@ export default function Chatbot() {
       formatDate={formatDate}
       popupMessage={popupMessage}
       isFadingOut={isFadingOut}
+      isHistoryFadingOut={isHistoryFadingOut}
+      isSettingsFadingOut={isSettingsFadingOut}
       isSettingsPopupVisible={isSettingsPopupVisible}
       responseLength={responseLength}
       setResponseLength={setResponseLength}
@@ -340,6 +364,7 @@ export default function Chatbot() {
       handleRemoveCommandBox={handleRemoveCommandBox}
       handleKeyDown={handleKeyDown}
       inputRef={inputRef}
+      handleDeleteConversation={handleDeleteConversation}
     />
   );
 }

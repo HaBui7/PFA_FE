@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useOutletContext } from "react-router-dom";
 import { marked } from "marked";
-import { Send, RefreshCw, Settings, History } from "lucide-react";
+import { Send, RefreshCw, Settings, History, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
@@ -38,6 +38,8 @@ interface ChatbotTemplateProps {
   endDate: string;
   setEndDate: React.Dispatch<React.SetStateAction<string>>;
   isFadingOut: boolean;
+  isHistoryFadingOut: boolean;
+  isSettingsFadingOut: boolean;
   isProcessing: boolean;
   showTooltip: boolean;
   setShowTooltip: React.Dispatch<React.SetStateAction<boolean>>;
@@ -49,19 +51,15 @@ interface ChatbotTemplateProps {
   handleRemoveCommandBox: () => void;
   inputRef: React.RefObject<HTMLInputElement>;
   handleKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void;
+  handleDeleteConversation: (conversationId: string) => void;
 }
 
 const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
   inputValue,
-  setInputValue,
   isPopupVisible,
   setIsPopupVisible,
   conversations,
-  setConversations,
   messages,
-  setMessages,
-  title,
-  conversationId,
   handleInputChange,
   handleCommandClick,
   handleSendMessage,
@@ -82,15 +80,17 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
   endDate,
   setEndDate,
   isFadingOut,
+  isHistoryFadingOut,
+  isSettingsFadingOut,
   isProcessing,
   showTooltip,
   selectedIndex,
   filteredCommands,
   commandBox,
   getPlaceholderText,
-  handleRemoveCommandBox,
   inputRef,
   handleKeyDown,
+  handleDeleteConversation,
 }) => {
   const navigate = useNavigate();
   const { navHeight } = useOutletContext();
@@ -244,7 +244,7 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
           {isPopupVisible && (
             <div
               className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 ${
-                isFadingOut ? "fade-out" : "fade-in"
+                isHistoryFadingOut ? "fade-out" : "fade-in"
               }`}
             >
               <div className="bg-white p-8 rounded-lg shadow-lg max-h-screen overflow-y-auto">
@@ -254,19 +254,30 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
                     {conversations.map((conversation) => (
                       <li
                         key={conversation.conversation_id}
-                        className="mb-2 cursor-pointer hover:bg-gray-200"
+                        className="mb-2 cursor-pointer flex justify-between items-center"
                         onClick={() => {
                           navigate(`/chatbot/${conversation.conversation_id}`);
                           setIsPopupVisible(false); // Close the popup
                         }}
                       >
-                        <div className="p-4 border border-gray-300 rounded-lg bg-white shadow-md">
-                          <h3 className="text-base font-semibold">
-                            {conversation.title}
-                          </h3>
-                          <p className="text-sm text-gray-500">
-                            Date: {formatDate(conversation.createdAt)}
-                          </p>
+                        <div className="p-4 border border-gray-300 rounded-lg bg-white shadow-md flex-grow flex justify-between items-center">
+                          <div>
+                            <h3 className="text-base font-semibold">
+                              {conversation.title}
+                            </h3>
+                            <p className="text-sm text-gray-500">
+                              Date: {formatDate(conversation.createdAt)}
+                            </p>
+                          </div>
+                          <Trash2
+                            className="ml-4 cursor-pointer"
+                            onClick={(e) => {
+                              e.stopPropagation(); // Prevent triggering the parent
+                              handleDeleteConversation(
+                                conversation.conversation_id
+                              ); // Call the delete handler
+                            }}
+                          />
                         </div>
                       </li>
                     ))}
@@ -284,7 +295,7 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
           {isSettingsPopupVisible && (
             <div
               className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 ${
-                isFadingOut ? "fade-out" : "fade-in"
+                isSettingsFadingOut ? "fade-out" : "fade-in"
               }`}
             >
               <div className="bg-white p-8 rounded-lg shadow-lg">
