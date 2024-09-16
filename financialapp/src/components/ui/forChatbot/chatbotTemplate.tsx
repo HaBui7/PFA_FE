@@ -123,7 +123,7 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
         )}
         <main className="overflow-auto h-full w-full sticky">
           {messages && messages.length === 0 ? (
-            <div className="text-center mt-80">
+            <div className="text-center mt-40">
               <h1 className="text-xl font-semibold">Powered by RMIT Val</h1>
               <p className="text-gray-500">Model: GPT-4o</p>
               <p className="text-sm text-gray-400 mt-4">
