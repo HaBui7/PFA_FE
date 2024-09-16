@@ -227,11 +227,16 @@ export default function Chatbot() {
     setIsSettingsPopupVisible(!isSettingsPopupVisible);
   };
 
+  const formatDateToDDMMYY = (dateString: string) => {
+    const [year, month, day] = dateString.split("-");
+    return `${day}${month}${year.slice(2)}`;
+  };
+
   const handleSaveSettings = () => {
     localStorage.setItem("response_length", responseLength);
     localStorage.setItem("temperature", temperature.toString());
-    localStorage.setItem("startdate", startDate);
-    localStorage.setItem("enddate", endDate);
+    localStorage.setItem("startdate", formatDateToDDMMYY(startDate));
+    localStorage.setItem("enddate", formatDateToDDMMYY(endDate));
     setIsSettingsFadingOut(true); // Start fade-out effect
     setTimeout(() => {
       setIsSettingsPopupVisible(false); // Hide popup after fade-out
@@ -242,8 +247,8 @@ export default function Chatbot() {
   const handleResetSettings = () => {
     localStorage.setItem("response_length", "short");
     localStorage.setItem("temperature", "0.5");
-    localStorage.setItem("startdate", "");
-    localStorage.setItem("enddate", "");
+    localStorage.setItem("startdate", formatDateToDDMMYY(""));
+    localStorage.setItem("enddate", formatDateToDDMMYY(""));
     setResponseLength("short");
     setTemperature(0.5);
     setStartDate("");
@@ -260,6 +265,8 @@ export default function Chatbot() {
     // Clear conversation_messages from local storage
     localStorage.setItem("conversation_messages", JSON.stringify([]));
     localStorage.setItem("conversation_title", "");
+    localStorage.setItem("startdate", "");
+    localStorage.setItem("enddate", "");
     setMessages([]); // Clear messages state
     navigate("/chatbot");
   };
@@ -311,13 +318,28 @@ export default function Chatbot() {
   React.useEffect(() => {
     if (conversationId) {
       fetchConversations(conversationId, setMessages, setTitle)
-        .then(() => showPopupMessage("success", "Conversations loaded."))
+        .then(() => {
+          showPopupMessage("success", "Conversations loaded.");
+          // Set startdate and enddate to empty strings
+          localStorage.setItem("startdate", "");
+          localStorage.setItem("enddate", "");
+          setStartDate("");
+          setEndDate("");
+        })
         .catch((error) => showPopupMessage("error", `Error: ${error.message}`));
     }
   }, [conversationId]);
+  
   React.useEffect(() => {
     localStorage.setItem("conversation_messages", JSON.stringify(messages));
   }, [messages]);
+
+  React.useEffect(() => {
+    localStorage.setItem("startdate", "");
+    localStorage.setItem("enddate", "");
+    setStartDate("");
+    setEndDate("");
+  }, []);
 
   return (
     <ChatbotTemplate
