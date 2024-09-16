@@ -8,7 +8,6 @@ import {
   CardDescription,
   CardFooter,
 } from "@/components/ui/card";
-import { TrendingUp } from "lucide-react";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import {
   ChartTooltip,
@@ -36,18 +35,41 @@ const chartConfig = {
 };
 
 const DashlineChart = () => {
-  // States for data, loading, and error handling
   const [chartData, setChartData] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState(true); // Start as loading
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedYear, setSelectedYear] = useState<number>(2024); // Default year
+  const [availableYears, setAvailableYears] = useState<number[]>([]);
 
-  // Fetch data from the API on component mount
+  // Fetch available years for the dropdown
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true); // Set loading to true before starting the request
+    const fetchAvailableYears = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3000/api/transactions/getChartData?year=2024",
+          "http://localhost:3000/api/transactions/getTransactionYear",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("auth")}`,
+            },
+          }
+        );
+        const { data } = response.data;
+        setAvailableYears(data); // Update available years
+      } catch (err) {
+        setError("Failed to fetch available years");
+      }
+    };
+
+    fetchAvailableYears();
+  }, []);
+
+  // Fetch data based on selected year
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/transactions/getChartData?year=${selectedYear}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("auth")}`,
@@ -56,38 +78,57 @@ const DashlineChart = () => {
         );
         const { data } = response.data;
 
-        // Transform the data to match the chart's structure
         const transformedData = data.map((item: Transaction) => ({
           month: item.month,
           income: item.income,
           expense: item.expense,
         }));
 
-        setChartData(transformedData); // Update state with the fetched data
-        setLoading(false); // Set loading to false after data is fetched
+        setChartData(transformedData);
+        setLoading(false);
       } catch (err) {
         setError("Failed to fetch data");
-        setLoading(false); // Set loading to false in case of error
+        setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [selectedYear]); // Re-fetch data when selectedYear changes
 
-  // Show loading state or error message if applicable
-  if (loading) return <div>Loading...</div>; // Show loading while fetching
-  if (error) return <div>Error: {error}</div>; // Show error if there's any
+  // Handle loading and error states
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Balance Performance</CardTitle>
         <CardDescription>
-          Showing total income/expense of each month in the year 2024
+          Showing total income/expense of each month in the selected year
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {chartData.length > 0 ? ( // Conditionally render the chart only when data is available
+        {/* Year selection dropdown */}
+        <div className="mb-4">
+          <label htmlFor="year-select" className="block text-sm font-medium">
+            Select Year:
+          </label>
+          <select
+            id="year-select"
+            value={selectedYear}
+            onChange={(e) => setSelectedYear(Number(e.target.value))} // Update selected year
+            className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none"
+          >
+            {availableYears.map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Chart rendering */}
+        {chartData.length > 0 ? (
           <ChartContainer config={chartConfig}>
             <AreaChart
               data={chartData}
@@ -130,15 +171,14 @@ const DashlineChart = () => {
             </AreaChart>
           </ChartContainer>
         ) : (
-          <div>No data available</div> // Handle the case where no data is available
+          <div>No data available for the selected year</div>
         )}
       </CardContent>
       <CardFooter>
         <div className="flex w-full items-start gap-2 text-sm">
           <div className="grid gap-2">
-            <div className="flex items-center gap-2 font-medium leading-none"></div>
             <div className="flex items-center gap-2 leading-none text-muted-foreground">
-              Display Year 2024
+              Display Year: {selectedYear}
             </div>
           </div>
         </div>
