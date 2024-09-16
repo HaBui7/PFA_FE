@@ -178,17 +178,17 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
             {startDate || endDate ? (
               <div className="mb-2 mr-4 text-right text-gray-500 absolute bottom-10 right-0">
                 {startDate && endDate
-                  ? `Data range: from ${formatDate(
+                  ? `Selected data range: from ${formatDate(
                       startDate,
                       false
                     )} to ${formatDate(endDate, false)}`
                   : startDate
-                  ? `Data range: from ${formatDate(startDate, false)}`
-                  : `Data range: until ${formatDate(endDate, false)}`}
+                  ? `Selected data range: from ${formatDate(startDate, false)}`
+                  : `Selected data range: until ${formatDate(endDate, false)}`}
               </div>
             ) : (
               <div className="mb-2 mr-4 text-right text-gray-500 absolute bottom-10 right-0">
-                Data range: All
+                Selected data range: All
               </div>
             )}
             <div className="input-wrapper">
