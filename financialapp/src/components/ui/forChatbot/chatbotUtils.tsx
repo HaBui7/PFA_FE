@@ -177,3 +177,23 @@ export const getTransactionCount = async (startdate, enddate) => {
     throw error;
   }
 };
+
+export const deleteConversation = async (conversationId: string) => {
+  try {
+    const headers = {
+      Authorization: "Bearer " + localStorage.getItem("auth"),
+    };
+    const response = await axios.delete(
+      `http://localhost:3000/api/gpt/conversations/${conversationId}`,
+      { headers }
+    );
+    return response.data;
+  } catch (error) {
+    if (error.code === "ERR_NETWORK") {
+      console.error("Network error while deleting conversation:", error);
+    } else {
+      console.error("Error deleting conversation:", error);
+    }
+    throw error;
+  }
+};

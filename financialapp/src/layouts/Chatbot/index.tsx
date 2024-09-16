@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import {
   fetchConversations,
   generateResponse,
-  getTransactionCount,
+  deleteConversation,
 } from "@/components/ui/forChatbot/chatbotUtils";
 import ChatbotTemplate from "@/components/ui/forChatbot/chatbotTemplate";
 
@@ -20,9 +20,11 @@ export default function Chatbot() {
     message: string;
   } | null>(null);
   const [isFadingOut, setIsFadingOut] = React.useState(false);
+  const [isHistoryFadingOut, setIsHistoryFadingOut] = React.useState(false);
+  const [isSettingsFadingOut, setIsSettingsFadingOut] = React.useState(false);
   const [isSettingsPopupVisible, setIsSettingsPopupVisible] =
     React.useState(false);
-  const [responseLength, setResponseLength] = React.useState("medium");
+  const [responseLength, setResponseLength] = React.useState("short");
   const [temperature, setTemperature] = React.useState(0.5);
   const [startDate, setStartDate] = React.useState("");
   const [endDate, setEndDate] = React.useState("");
@@ -213,7 +215,11 @@ export default function Chatbot() {
         showPopupMessage("error", `Error: ${error.message}`);
       }
     } else {
-      setIsPopupVisible(false);
+      setIsHistoryFadingOut(true); // Start fade-out effect
+      setTimeout(() => {
+        setIsPopupVisible(false); // Hide popup after fade-out
+        setIsHistoryFadingOut(false); // Reset fade-out state
+      }, 500); // Match the duration of the fade-out animation
     }
   };
 
@@ -221,26 +227,46 @@ export default function Chatbot() {
     setIsSettingsPopupVisible(!isSettingsPopupVisible);
   };
 
+  const formatDateToDDMMYY = (dateString: string) => {
+    const [year, month, day] = dateString.split("-");
+    return `${day}${month}${year.slice(2)}`;
+  };
+
   const handleSaveSettings = () => {
     localStorage.setItem("response_length", responseLength);
     localStorage.setItem("temperature", temperature.toString());
-    localStorage.setItem("startdate", startDate);
-    localStorage.setItem("enddate", endDate);
-    getTransactionCount(startDate, endDate);
-    toggleSettingsPopup();
+    localStorage.setItem("startdate", formatDateToDDMMYY(startDate));
+    localStorage.setItem("enddate", formatDateToDDMMYY(endDate));
+    setIsSettingsFadingOut(true); // Start fade-out effect
+    setTimeout(() => {
+      setIsSettingsPopupVisible(false); // Hide popup after fade-out
+      setIsSettingsFadingOut(false); // Reset fade-out state
+    }, 500); // Match the duration of the fade-out animation
   };
 
   const handleResetSettings = () => {
+    localStorage.setItem("response_length", "short");
+    localStorage.setItem("temperature", "0.5");
+    localStorage.setItem("startdate", formatDateToDDMMYY(""));
+    localStorage.setItem("enddate", formatDateToDDMMYY(""));
     setResponseLength("short");
     setTemperature(0.5);
     setStartDate("");
     setEndDate("");
+    setIsSettingsFadingOut(true); // Start fade-out effect
+    setTimeout(() => {
+      setIsSettingsPopupVisible(false); // Hide popup after fade-out
+      setIsSettingsFadingOut(false); // Reset fade-out state
+    }, 500); // Match the duration of the fade-out animation
   };
 
   const handleResetClick = () => {
+    // Reset conversation button
     // Clear conversation_messages from local storage
-    localStorage.setItem("conversation_messages", []);
+    localStorage.setItem("conversation_messages", JSON.stringify([]));
     localStorage.setItem("conversation_title", "");
+    localStorage.setItem("startdate", "");
+    localStorage.setItem("enddate", "");
     setMessages([]); // Clear messages state
     navigate("/chatbot");
   };
@@ -274,16 +300,46 @@ export default function Chatbot() {
     )} ${month} ${year}, ${formattedHours}:${minutes} ${period}`;
   };
 
+  const handleDeleteConversation = async (conversationId: string) => {
+    try {
+      await deleteConversation(conversationId); // Call the API to delete the conversation
+      setConversations((prevConversations) =>
+        prevConversations.filter(
+          (conversation) => conversation.conversation_id !== conversationId
+        )
+      ); // Update the state to remove the conversation
+      showPopupMessage("success", "Conversation deleted successfully.");
+    } catch (error) {
+      console.error("Failed to delete conversation:", error);
+      showPopupMessage("error", `Error: ${error.message}`);
+    }
+  };
+
   React.useEffect(() => {
     if (conversationId) {
       fetchConversations(conversationId, setMessages, setTitle)
-        .then(() => showPopupMessage("success", "Conversations loaded."))
+        .then(() => {
+          showPopupMessage("success", "Conversations loaded.");
+          // Set startdate and enddate to empty strings
+          localStorage.setItem("startdate", "");
+          localStorage.setItem("enddate", "");
+          setStartDate("");
+          setEndDate("");
+        })
         .catch((error) => showPopupMessage("error", `Error: ${error.message}`));
     }
   }, [conversationId]);
+  
   React.useEffect(() => {
     localStorage.setItem("conversation_messages", JSON.stringify(messages));
   }, [messages]);
+
+  React.useEffect(() => {
+    localStorage.setItem("startdate", "");
+    localStorage.setItem("enddate", "");
+    setStartDate("");
+    setEndDate("");
+  }, []);
 
   return (
     <ChatbotTemplate
@@ -309,6 +365,8 @@ export default function Chatbot() {
       formatDate={formatDate}
       popupMessage={popupMessage}
       isFadingOut={isFadingOut}
+      isHistoryFadingOut={isHistoryFadingOut}
+      isSettingsFadingOut={isSettingsFadingOut}
       isSettingsPopupVisible={isSettingsPopupVisible}
       responseLength={responseLength}
       setResponseLength={setResponseLength}
@@ -328,6 +386,7 @@ export default function Chatbot() {
       handleRemoveCommandBox={handleRemoveCommandBox}
       handleKeyDown={handleKeyDown}
       inputRef={inputRef}
+      handleDeleteConversation={handleDeleteConversation}
     />
   );
 }

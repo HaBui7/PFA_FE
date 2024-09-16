@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useOutletContext } from "react-router-dom";
 import { marked } from "marked";
-import { Send, RefreshCw, Settings, History } from "lucide-react";
+import { Send, RefreshCw, Settings, History, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
@@ -38,6 +38,8 @@ interface ChatbotTemplateProps {
   endDate: string;
   setEndDate: React.Dispatch<React.SetStateAction<string>>;
   isFadingOut: boolean;
+  isHistoryFadingOut: boolean;
+  isSettingsFadingOut: boolean;
   isProcessing: boolean;
   showTooltip: boolean;
   setShowTooltip: React.Dispatch<React.SetStateAction<boolean>>;
@@ -49,19 +51,15 @@ interface ChatbotTemplateProps {
   handleRemoveCommandBox: () => void;
   inputRef: React.RefObject<HTMLInputElement>;
   handleKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void;
+  handleDeleteConversation: (conversationId: string) => void;
 }
 
 const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
   inputValue,
-  setInputValue,
   isPopupVisible,
   setIsPopupVisible,
   conversations,
-  setConversations,
   messages,
-  setMessages,
-  title,
-  conversationId,
   handleInputChange,
   handleCommandClick,
   handleSendMessage,
@@ -82,15 +80,17 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
   endDate,
   setEndDate,
   isFadingOut,
+  isHistoryFadingOut,
+  isSettingsFadingOut,
   isProcessing,
   showTooltip,
   selectedIndex,
   filteredCommands,
   commandBox,
   getPlaceholderText,
-  handleRemoveCommandBox,
   inputRef,
   handleKeyDown,
+  handleDeleteConversation,
 }) => {
   const navigate = useNavigate();
   const { navHeight } = useOutletContext();
@@ -116,14 +116,14 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
             } text-white ${isFadingOut ? "fade-out" : "fade-in"} ${
               !isFadingOut && !popupMessage ? "initial" : ""
             }`}
-            style={{ top: "4rem" }}
+            style={{ top: "4rem", zIndex: 1000 }} // Add zIndex here
           >
             {popupMessage.message}
           </div>
         )}
         <main className="overflow-auto h-full w-full sticky">
           {messages && messages.length === 0 ? (
-            <div className="text-center mt-20">
+            <div className="text-center mt-80">
               <h1 className="text-xl font-semibold">Powered by RMIT Val</h1>
               <p className="text-gray-500">Model: GPT-4o</p>
               <p className="text-sm text-gray-400 mt-4">
@@ -242,7 +242,11 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
             </Button>
           </div>
           {isPopupVisible && (
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div
+              className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 ${
+                isHistoryFadingOut ? "fade-out" : "fade-in"
+              }`}
+            >
               <div className="bg-white p-8 rounded-lg shadow-lg max-h-screen overflow-y-auto">
                 <h2 className="text-xl font-semibold mb-4">Conversations</h2>
                 {conversations.length > 0 ? (
@@ -250,19 +254,30 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
                     {conversations.map((conversation) => (
                       <li
                         key={conversation.conversation_id}
-                        className="mb-2 cursor-pointer hover:bg-gray-200"
+                        className="mb-2 cursor-pointer flex justify-between items-center"
                         onClick={() => {
                           navigate(`/chatbot/${conversation.conversation_id}`);
                           setIsPopupVisible(false); // Close the popup
                         }}
                       >
-                        <div className="p-4 border border-gray-300 rounded-lg bg-white shadow-md">
-                          <h3 className="text-base font-semibold">
-                            {conversation.title}
-                          </h3>
-                          <p className="text-sm text-gray-500">
-                            Date: {formatDate(conversation.createdAt)}
-                          </p>
+                        <div className="p-4 border border-gray-300 rounded-lg bg-white shadow-md flex-grow flex justify-between items-center">
+                          <div>
+                            <h3 className="text-base font-semibold">
+                              {conversation.title}
+                            </h3>
+                            <p className="text-sm text-gray-500">
+                              Date: {formatDate(conversation.createdAt)}
+                            </p>
+                          </div>
+                          <Trash2
+                            className="ml-4 cursor-pointer"
+                            onClick={(e) => {
+                              e.stopPropagation(); // Prevent triggering the parent
+                              handleDeleteConversation(
+                                conversation.conversation_id
+                              ); // Call the delete handler
+                            }}
+                          />
                         </div>
                       </li>
                     ))}
@@ -278,7 +293,11 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
           )}
 
           {isSettingsPopupVisible && (
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div
+              className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 ${
+                isSettingsFadingOut ? "fade-out" : "fade-in"
+              }`}
+            >
               <div className="bg-white p-8 rounded-lg shadow-lg">
                 <h2 className="text-xl font-semibold mb-4">Settings</h2>
                 <div className="mb-4">
@@ -288,7 +307,7 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
                   <select
                     value={responseLength}
                     onChange={(e) => setResponseLength(e.target.value)}
-                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                    className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                   >
                     <option value="short">Short</option>
                     <option value="medium">Medium</option>
@@ -299,15 +318,15 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
                   <label className="block text-sm font-medium text-gray-700">
                     Temperature
                   </label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    min="0.1"
-                    max="1.0"
+                  <select
                     value={temperature}
                     onChange={(e) => setTemperature(parseFloat(e.target.value))}
-                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                  />
+                    className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  >
+                    <option value="0.2">More precise</option>
+                    <option value="0.5">More balanced</option>
+                    <option value="0.7">More creative</option>
+                  </select>
                 </div>
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700">
@@ -333,13 +352,13 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
                 </div>
                 <div className="flex space-x-4">
                   <Button
-                    className="bg-blue-500 text-white px-4 py-2 rounded-md"
+                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:ring-offset-slate-950 dark:focus-visible:ring-slate-300 bg-slate-900 text-slate-50 hover:bg-slate-900/90 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90 h-10 px-4 py-2"
                     onClick={handleSaveSettings}
                   >
                     Save
                   </Button>
                   <Button
-                    className="bg-red-500 text-white px-4 py-2 rounded-md"
+                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:ring-offset-slate-950 dark:focus-visible:ring-slate-300 bg-slate-100 text-slate-900 hover:bg-slate-100/80 dark:bg-slate-800 dark:text-slate-50 dark:hover:bg-slate-800/80 h-10 px-4 py-2"
                     onClick={handleResetSettings}
                   >
                     Reset
