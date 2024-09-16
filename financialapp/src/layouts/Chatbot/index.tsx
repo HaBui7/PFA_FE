@@ -4,7 +4,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import {
   fetchConversations,
   generateResponse,
-  getTransactionCount,
 } from "@/components/ui/forChatbot/chatbotUtils";
 import ChatbotTemplate from "@/components/ui/forChatbot/chatbotTemplate";
 
@@ -22,7 +21,7 @@ export default function Chatbot() {
   const [isFadingOut, setIsFadingOut] = React.useState(false);
   const [isSettingsPopupVisible, setIsSettingsPopupVisible] =
     React.useState(false);
-  const [responseLength, setResponseLength] = React.useState("medium");
+  const [responseLength, setResponseLength] = React.useState("short");
   const [temperature, setTemperature] = React.useState(0.5);
   const [startDate, setStartDate] = React.useState("");
   const [endDate, setEndDate] = React.useState("");
@@ -36,7 +35,8 @@ export default function Chatbot() {
   const filteredCommands = commands.filter((command) =>
     command.startsWith(inputValue)
   );
-
+  
+  
   const showPopupMessage = (type: string, message: string) => {
     setPopupMessage({ type, message });
     setTimeout(() => {
@@ -213,7 +213,11 @@ export default function Chatbot() {
         showPopupMessage("error", `Error: ${error.message}`);
       }
     } else {
-      setIsPopupVisible(false);
+      setIsFadingOut(true); // Start fade-out effect
+      setTimeout(() => {
+        setIsPopupVisible(false); // Hide popup after fade-out
+        setIsFadingOut(false); // Reset fade-out state
+      }, 500); // Match the duration of the fade-out animation
     }
   };
 
@@ -226,8 +230,11 @@ export default function Chatbot() {
     localStorage.setItem("temperature", temperature.toString());
     localStorage.setItem("startdate", startDate);
     localStorage.setItem("enddate", endDate);
-    getTransactionCount(startDate, endDate);
-    toggleSettingsPopup();
+    setIsFadingOut(true); // Start fade-out effect
+    setTimeout(() => {
+      setIsSettingsPopupVisible(false); // Hide popup after fade-out
+      setIsFadingOut(false); // Reset fade-out state
+    }, 500); // Match the duration of the fade-out animation
   };
 
   const handleResetSettings = () => {
@@ -235,11 +242,16 @@ export default function Chatbot() {
     setTemperature(0.5);
     setStartDate("");
     setEndDate("");
+    setIsFadingOut(true); // Start fade-out effect
+    setTimeout(() => {
+      setIsSettingsPopupVisible(false); // Hide popup after fade-out
+      setIsFadingOut(false); // Reset fade-out state
+    }, 500); // Match the duration of the fade-out animation
   };
 
   const handleResetClick = () => {
     // Clear conversation_messages from local storage
-    localStorage.setItem("conversation_messages", []);
+    localStorage.setItem("conversation_messages", JSON.stringify([]));
     localStorage.setItem("conversation_title", "");
     setMessages([]); // Clear messages state
     navigate("/chatbot");

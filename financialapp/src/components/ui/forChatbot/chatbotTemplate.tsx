@@ -242,7 +242,11 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
             </Button>
           </div>
           {isPopupVisible && (
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div
+              className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 ${
+                isFadingOut ? "fade-out" : "fade-in"
+              }`}
+            >
               <div className="bg-white p-8 rounded-lg shadow-lg max-h-screen overflow-y-auto">
                 <h2 className="text-xl font-semibold mb-4">Conversations</h2>
                 {conversations.length > 0 ? (
@@ -278,7 +282,11 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
           )}
 
           {isSettingsPopupVisible && (
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div
+              className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 ${
+                isFadingOut ? "fade-out" : "fade-in"
+              }`}
+            >
               <div className="bg-white p-8 rounded-lg shadow-lg">
                 <h2 className="text-xl font-semibold mb-4">Settings</h2>
                 <div className="mb-4">
@@ -288,7 +296,7 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
                   <select
                     value={responseLength}
                     onChange={(e) => setResponseLength(e.target.value)}
-                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                    className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                   >
                     <option value="short">Short</option>
                     <option value="medium">Medium</option>
@@ -299,15 +307,15 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
                   <label className="block text-sm font-medium text-gray-700">
                     Temperature
                   </label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    min="0.1"
-                    max="1.0"
+                  <select
                     value={temperature}
                     onChange={(e) => setTemperature(parseFloat(e.target.value))}
-                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                  />
+                    className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  >
+                    <option value="0.2">More precise</option>
+                    <option value="0.5">More balanced</option>
+                    <option value="0.7">More creative</option>
+                  </select>
                 </div>
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700">
@@ -333,13 +341,13 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
                 </div>
                 <div className="flex space-x-4">
                   <Button
-                    className="bg-blue-500 text-white px-4 py-2 rounded-md"
+                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:ring-offset-slate-950 dark:focus-visible:ring-slate-300 bg-slate-900 text-slate-50 hover:bg-slate-900/90 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90 h-10 px-4 py-2"
                     onClick={handleSaveSettings}
                   >
                     Save
                   </Button>
                   <Button
-                    className="bg-red-500 text-white px-4 py-2 rounded-md"
+                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:ring-offset-slate-950 dark:focus-visible:ring-slate-300 bg-slate-100 text-slate-900 hover:bg-slate-100/80 dark:bg-slate-800 dark:text-slate-50 dark:hover:bg-slate-800/80 h-10 px-4 py-2"
                     onClick={handleResetSettings}
                   >
                     Reset
