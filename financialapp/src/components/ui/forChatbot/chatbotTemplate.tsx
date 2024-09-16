@@ -176,7 +176,7 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
         <section className="flex flex-col items-center text-black ">
           <div className="mt-8 w-full max-w-2xl relative">
             {startDate || endDate ? (
-              <div className="mb-2 mr-4 text-right text-gray-500 absolute bottom-10 right-0">
+              <div className="mb-2 mr-4 text-center text-gray-500 absolute bottom-10 left-1/2 transform -translate-x-1/2">
                 {startDate && endDate
                   ? `Selected data range: from ${formatDate(
                       startDate,
@@ -187,7 +187,7 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
                   : `Selected data range: until ${formatDate(endDate, false)}`}
               </div>
             ) : (
-              <div className="mb-2 mr-4 text-right text-gray-500 absolute bottom-10 right-0">
+              <div className="mb-2 mr-4 text-center text-gray-500 absolute bottom-10 left-1/2 transform -translate-x-1/2">
                 Selected data range: All
               </div>
             )}
