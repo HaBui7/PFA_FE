@@ -75,7 +75,7 @@ export default function SavingToggle() {
         }
       );
 
-      setSavingPercentage(response.data.autoSavingPercentage);
+      setSavingPercentage(response.data.data.autoSavingPercentage);
       setIsAutoSavingEnabled(true);
       setIsModalOpen(false);
       setError(null);
