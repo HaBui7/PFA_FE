@@ -172,9 +172,25 @@ const ChatbotTemplate: React.FC<ChatbotTemplateProps> = ({
           )}
         </main>
 
-        {/* Example Questions */}
-        <section className="flex flex-col items-center  text-black ">
+        {/* Input field */}
+        <section className="flex flex-col items-center text-black ">
           <div className="mt-8 w-full max-w-2xl relative">
+            {startDate || endDate ? (
+              <div className="mb-2 mr-4 text-right text-gray-500 absolute bottom-10 right-0">
+                {startDate && endDate
+                  ? `Data range: from ${formatDate(
+                      startDate,
+                      false
+                    )} to ${formatDate(endDate, false)}`
+                  : startDate
+                  ? `Data range: from ${formatDate(startDate, false)}`
+                  : `Data range: until ${formatDate(endDate, false)}`}
+              </div>
+            ) : (
+              <div className="mb-2 mr-4 text-right text-gray-500 absolute bottom-10 right-0">
+                Data range: All
+              </div>
+            )}
             <div className="input-wrapper">
               {commandBox && <div className="command-box">{commandBox}</div>}
               <Input

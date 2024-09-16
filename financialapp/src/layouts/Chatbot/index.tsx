@@ -227,9 +227,13 @@ export default function Chatbot() {
     setIsSettingsPopupVisible(!isSettingsPopupVisible);
   };
 
-  const formatDateToDDMMYY = (dateString: string) => {
-    const [year, month, day] = dateString.split("-");
-    return `${day}${month}${year.slice(2)}`;
+  const formatDateToDDMMYY = (date: Date | string) => {
+    if (!date) return "";
+    const d = new Date(date);
+    const day = String(d.getDate()).padStart(2, "0");
+    const month = String(d.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+    const year = String(d.getFullYear()).slice(2); // Get last two digits of year
+    return `${day}${month}${year}`;
   };
 
   const handleSaveSettings = () => {
@@ -237,6 +241,8 @@ export default function Chatbot() {
     localStorage.setItem("temperature", temperature.toString());
     localStorage.setItem("startdate", formatDateToDDMMYY(startDate));
     localStorage.setItem("enddate", formatDateToDDMMYY(endDate));
+    setStartDate(startDate);
+    setEndDate(endDate);
     setIsSettingsFadingOut(true); // Start fade-out effect
     setTimeout(() => {
       setIsSettingsPopupVisible(false); // Hide popup after fade-out
@@ -247,8 +253,8 @@ export default function Chatbot() {
   const handleResetSettings = () => {
     localStorage.setItem("response_length", "short");
     localStorage.setItem("temperature", "0.5");
-    localStorage.setItem("startdate", formatDateToDDMMYY(""));
-    localStorage.setItem("enddate", formatDateToDDMMYY(""));
+    localStorage.setItem("startdate", "");
+    localStorage.setItem("enddate", "");
     setResponseLength("short");
     setTemperature(0.5);
     setStartDate("");
@@ -267,15 +273,18 @@ export default function Chatbot() {
     localStorage.setItem("conversation_title", "");
     localStorage.setItem("startdate", "");
     localStorage.setItem("enddate", "");
+    setStartDate("");
+    setEndDate("");
     setMessages([]); // Clear messages state
     navigate("/chatbot");
   };
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string, isTime: boolean = true) => {
     const date = new Date(dateString);
     const day = date.getDate();
     const month = date.toLocaleString("en-GB", { month: "long" });
     const year = date.getFullYear();
+
     const hours = date.getHours();
     const minutes = date.getMinutes().toString().padStart(2, "0");
     const period = hours >= 12 ? "PM" : "AM";
@@ -295,9 +304,12 @@ export default function Chatbot() {
       }
     };
 
-    return `${day}${daySuffix(
-      day
-    )} ${month} ${year}, ${formattedHours}:${minutes} ${period}`;
+    const formattedDate = `${day}${daySuffix(day)} ${month} ${year}`;
+    if (isTime) {
+      return `${formattedDate}, ${formattedHours}:${minutes} ${period}`;
+    } else {
+      return formattedDate;
+    }
   };
 
   const handleDeleteConversation = async (conversationId: string) => {
@@ -329,7 +341,7 @@ export default function Chatbot() {
         .catch((error) => showPopupMessage("error", `Error: ${error.message}`));
     }
   }, [conversationId]);
-  
+
   React.useEffect(() => {
     localStorage.setItem("conversation_messages", JSON.stringify(messages));
   }, [messages]);
