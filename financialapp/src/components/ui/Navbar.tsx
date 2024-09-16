@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import logo from "@/assets/logo.webp";
 import { Menu, X, ChevronDown } from "lucide-react";
 import avatar from "@/assets/avatar.jpg";
 import axios from "axios";
 
-const Navbar = () => {
+const Navbar = ({ setNavHeight }) => {
   const [loading, setLoading] = useState(false);
   const [balance, setBalance] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -14,6 +14,13 @@ const Navbar = () => {
   const [username, setUsername] = useState("");
   const navigate = useNavigate();
   const location = useLocation(); // Get current path
+  const navRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (navRef.current) {
+      setNavHeight(navRef.current.offsetHeight);
+    }
+  }, [navRef, setNavHeight]);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -56,7 +63,10 @@ const Navbar = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className="flex justify-between items-center p-4 bg-white border-b border-gray-200">
+    <nav
+      ref={navRef}
+      className="flex justify-between items-center p-4 bg-white border-b border-gray-200"
+    >
       <div className="flex items-center">
         <img src={logo} alt="Fintrack Logo" className="h-10 mr-2" />
       </div>
