@@ -141,7 +141,7 @@ export default function Chatbot() {
     setInputValue(""); // Clear input field
     setCommandBox(null); // Clear command box
 
-    const conversation_id = conversationId || ""; // Use conversationId if available, otherwise empty string
+    const conversation_id = localStorage.getItem("conversation_id") || ""; // Use conversationId if available, otherwise empty string
 
     try {
       let botMessage = { content: "", role: "assistant" };
@@ -151,6 +151,12 @@ export default function Chatbot() {
         conversation_id,
         fullMessage,
         (data) => {
+          // Save conversation_id if present
+          if (data && data.conversation_id) {
+            console.log("convo id found!");
+            localStorage.setItem("conversation_id", data.conversation_id);
+          }
+
           if (data && data.content) {
             botMessage.content += data.content.content;
             setMessages((prevMessages) => {
@@ -269,6 +275,7 @@ export default function Chatbot() {
   const handleResetClick = () => {
     // Reset conversation button
     // Clear conversation_messages from local storage
+    localStorage.setItem("conversation_id", "");
     localStorage.setItem("conversation_messages", JSON.stringify([]));
     localStorage.setItem("conversation_title", "");
     localStorage.setItem("startdate", "");
@@ -329,6 +336,7 @@ export default function Chatbot() {
 
   React.useEffect(() => {
     if (conversationId) {
+      localStorage.setItem("conversation_id", conversationId);
       fetchConversations(conversationId, setMessages, setTitle)
         .then(() => {
           showPopupMessage("success", "Conversations loaded.");

@@ -105,11 +105,10 @@ export const generateResponse = (
           if (done) {
             return;
           }
-
           buffer += decoder.decode(value, { stream: true });
           const lines = buffer.split("\n");
           buffer = lines.pop(); // Keep the last partial line in the buffer
-
+          
           lines.forEach((line) => {
             if (line.trim()) {
               try {
@@ -122,7 +121,7 @@ export const generateResponse = (
               }
             }
           });
-
+          
           return reader.read().then(processText);
         });
       })
