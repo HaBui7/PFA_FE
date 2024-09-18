@@ -98,8 +98,8 @@ const Signup = () => {
           WELCOME!
         </p>
         <div className="py-0 mt-1 text-md leading-8 text-gray-600 font-bold">
-          Already have an account?,{" "}
-          <a href="/login" color="blue">
+          Already have an account?{" "}
+          <a href="/login" className="text-black font-bold">
             Sign in
           </a>
         </div>
@@ -162,11 +162,11 @@ const Signup = () => {
               htmlFor="currentBalance"
               className="my-3 block text-sm font-medium leading-6 text-gray-900"
             >
-              currentBalance
+              Current Balance
             </label>
             <div className="my-3">
               <input
-                type="number"
+                type=""
                 id="currentBalance"
                 name="currentBalance"
                 className="pl-5 items-center block w-4/5 rounded-full border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -195,17 +195,7 @@ const Signup = () => {
                 onChange={(e) => setBirthday(e.target.value)}
               />
             </div>
-            <div className="">
-              <input
-                type="checkbox"
-                name=""
-                id=""
-                className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-              />
-              <label className="ms-2 text-sm pb-5 text-gray-900 dark:text-gray-300">
-                I agree to the terms & policy
-              </label>
-            </div>
+
             <div className="">
               <button
                 type="button"

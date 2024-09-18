@@ -41,14 +41,14 @@ export function BudgetPieChart({
                       y={viewBox.cy}
                       className="fill-foreground text-2xl font-bold"
                     >
-                      {totalSpent.toLocaleString()}
+                      {totalSpent.toLocaleString()}$
                     </tspan>
                     <tspan
                       x={viewBox.cx}
                       y={(viewBox.cy || 0) + 24}
                       className="fill-muted-foreground text-sm"
                     >
-                      out of {totalBudget.toLocaleString()}
+                      out of {totalBudget.toLocaleString()}$
                     </tspan>
                   </text>
                 );

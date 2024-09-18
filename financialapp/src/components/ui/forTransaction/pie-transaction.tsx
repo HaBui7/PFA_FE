@@ -1,12 +1,11 @@
 import * as React from "react";
-import { TrendingUp } from "lucide-react";
+
 import { Label, Pie, PieChart, Cell } from "recharts";
 import axios from "axios";
 
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -102,13 +101,11 @@ export function PieTransaction() {
       .reduce((acc, transaction) => {
         const category = transaction.category;
 
-        console.log(`Adding category: ${category}`);
         acc[category] = {
           category,
           transactionAmount: 0,
           fill: categoryColors[category] || "#000000", // Default to black if category not found
         };
-        console.log(`Fill color: ${acc[category].fill}`);
 
         acc[category].transactionAmount += transaction.transactionAmount;
         return acc;
@@ -136,8 +133,8 @@ export function PieTransaction() {
         <ChartContainer config={chartConfig} className="mx-auto aspect-square ">
           <PieChart>
             <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
+              cursor={{ stroke: "red", strokeWidth: 2 }}
+              content={<ChartTooltipContent className="!bg-white" hideLabel />}
             />
             <Pie
               data={chartData}
@@ -168,11 +165,8 @@ export function PieTransaction() {
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
-        <div className="flex items-center gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
         <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
+          Showing the expense amount of each category
         </div>
       </CardFooter>
     </Card>

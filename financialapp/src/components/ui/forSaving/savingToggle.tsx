@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Switch } from "../switch";
 import { Info } from "lucide-react";
 import {
@@ -75,7 +75,7 @@ export default function SavingToggle() {
         }
       );
 
-      setSavingPercentage(response.data.autoSavingPercentage);
+      setSavingPercentage(response.data.data.autoSavingPercentage);
       setIsAutoSavingEnabled(true);
       setIsModalOpen(false);
       setError(null);
