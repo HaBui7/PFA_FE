@@ -2,7 +2,7 @@
 Frontend repository for personal finance assistant app
 
 ## Installation
-- Download and [install Yarn](https://classic.yarnpkg.com/lang/en/docs/install/)
+- Download and install [Yarn](https://classic.yarnpkg.com/lang/en/docs/install/)
 - Clone the repository:
 ```bash
 git clone https://github.com/HaBui7/PFA_FE.git
