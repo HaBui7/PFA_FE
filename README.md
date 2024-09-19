@@ -1,4 +1,4 @@
-# PFA_FE
+# Personal Finance Application - Frontend
 Frontend repository for personal finance assistant app
 
 ## Installation
